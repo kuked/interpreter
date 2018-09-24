@@ -1,0 +1,5 @@
+require 'intp/ast'
+require 'intp/lexer'
+require 'intp/parser'
+require 'intp/token'
+require 'intp/repl'
