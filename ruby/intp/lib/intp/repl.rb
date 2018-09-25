@@ -1,4 +1,3 @@
-
 module Intp
   class Repl
     PROMPT = '>> '
@@ -18,7 +17,11 @@ module Intp
         end
 
         program = parser.parse_program
-        puts program
+
+        evaluated = Evaluator.eval(program)
+        if evaluated
+          puts evaluated.inspect
+        end
       end
     end
   end

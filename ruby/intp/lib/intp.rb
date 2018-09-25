@@ -1,5 +1,7 @@
 require 'intp/ast'
+require 'intp/evaluator'
 require 'intp/lexer'
+require 'intp/object'
 require 'intp/parser'
 require 'intp/token'
 require 'intp/repl'
