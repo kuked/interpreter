@@ -23,4 +23,20 @@ class EvaluatorTest < Minitest::Test
       check_integer_object(evaluated, test[1])
     end
   end
+
+  def test_eval_boolean_expression
+    tests = [
+      ["true", true],
+      ["false", false],
+    ]
+
+    tests.each do |test|
+      evaluated = do_eval(test[0])
+      _test_boolean_object(evaluated, test[1])
+    end
+  end
+
+  def _test_boolean_object(evaluated, expected)
+    assert_equal expected, evaluated.value
+  end
 end

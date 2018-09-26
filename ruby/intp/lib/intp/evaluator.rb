@@ -10,6 +10,10 @@ module Intp
         int = Intp::Integer.new
         int.value = node.value
         return int
+      when node.instance_of?(Intp::Boolean)
+        boolean = Intp::Boolean.new
+        boolean.value = node.value
+        return boolean
       end
       nil
     end
