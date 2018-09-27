@@ -14,8 +14,12 @@ module Intp
     end
   end
 
-  class Boolean
+  class BooleanObject
     attr_accessor :value
+    def initialize(value)
+      self.value = value
+    end
+
     def inspect
       "#{value}"
     end

@@ -11,9 +11,7 @@ module Intp
         int.value = node.value
         return int
       when node.instance_of?(Intp::Boolean)
-        boolean = Intp::Boolean.new
-        boolean.value = node.value
-        return boolean
+        return native_bool_to_boolean_object(node.value)
       end
       nil
     end
@@ -24,6 +22,12 @@ module Intp
         result = self.eval(s)
       end
       result
+    end
+
+    def self.native_bool_to_boolean_object(input)
+      @@true  ||= Intp::BooleanObject.new(true)
+      @@false ||= Intp::BooleanObject.new(false)
+      return input ? @@true : @@false
     end
   end
 end
