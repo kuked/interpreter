@@ -29,7 +29,10 @@ module Intp
     end
   end
 
-  class Null
+  TRUE = BooleanObject.new(true)
+  FALSE = BooleanObject.new(false)
+
+  class NullObject
     def inspect
       "null"
     end
@@ -38,4 +41,5 @@ module Intp
       NULL_OBJ
     end
   end
+  NULL = NullObject.new
 end

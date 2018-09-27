@@ -25,9 +25,7 @@ module Intp
     end
 
     def self.native_bool_to_boolean_object(input)
-      @@true  ||= Intp::BooleanObject.new(true)
-      @@false ||= Intp::BooleanObject.new(false)
-      return input ? @@true : @@false
+      return input ? Intp::TRUE : Intp::FALSE
     end
   end
 end
