@@ -70,17 +70,15 @@ module Intp
     end
 
     def self.eval_integer_infix_expression(operator, left, right)
-      l_val = left.value
-      r_val = right.value
       case operator
       when "+"
-        Intp::Integer.new(l_val + r_val)
+        Intp::Integer.new(left.value + right.value)
       when "-"
-        Intp::Integer.new(l_val - r_val)
+        Intp::Integer.new(left.value - right.value)
       when "*"
-        Intp::Integer.new(l_val * r_val)
+        Intp::Integer.new(left.value * right.value)
       when "/"
-        Intp::Integer.new(l_val / r_val)
+        Intp::Integer.new(left.value / right.value)
       else
         Intp::NULL
       end
