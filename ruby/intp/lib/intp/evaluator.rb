@@ -14,9 +14,7 @@ module Intp
         right = self.eval(node.right)
         return eval_prefix_expression(node.operator, right)
       when node.instance_of?(Intp::IntegerLiteral)
-        int = Intp::Integer.new
-        int.value = node.value
-        return int
+        return Intp::Integer.new(node.value)
       when node.instance_of?(Intp::Boolean)
         return native_bool_to_boolean_object(node.value)
       end
@@ -68,9 +66,7 @@ module Intp
       if right.type != Intp::INTEGER_OBJ
         return Intp::NULL
       end
-      int = Intp::Integer.new
-      int.value = -(right.value)
-      return int
+      Intp::Integer.new(-(right.value))
     end
 
     def self.eval_integer_infix_expression(operator, left, right)
@@ -78,23 +74,15 @@ module Intp
       r_val = right.value
       case operator
       when "+"
-        int = Intp::Integer.new
-        int.value = l_val + r_val
-        return int
+        Intp::Integer.new(l_val + r_val)
       when "-"
-        int = Intp::Integer.new
-        int.value = l_val - r_val
-        return int
+        Intp::Integer.new(l_val - r_val)
       when "*"
-        int = Intp::Integer.new
-        int.value = l_val * r_val
-        return int
+        Intp::Integer.new(l_val * r_val)
       when "/"
-        int = Intp::Integer.new
-        int.value = l_val / r_val
-        return int
+        Intp::Integer.new(l_val / r_val)
       else
-        return Intp::NULL
+        Intp::NULL
       end
     end
 
