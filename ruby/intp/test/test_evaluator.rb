@@ -36,6 +36,22 @@ class EvaluatorTest < Minitest::Test
     end
   end
 
+  def test_bang_operator
+    tests = [
+      ["!true", false],
+      ["!false", true],
+      ["!5", false],
+      ["!!true", true],
+      ["!!false", false],
+      ["!!5", true],
+    ]
+
+    tests.each do |test|
+      evaluated = do_eval(test[0])
+      _test_boolean_object(evaluated, test[1])
+    end
+  end
+
   def _test_boolean_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end
