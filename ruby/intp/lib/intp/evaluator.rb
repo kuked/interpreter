@@ -6,6 +6,10 @@ module Intp
         return eval_statements(node.statements)
       when node.instance_of?(Intp::ExpressionStatement)
         return self.eval(node.expression)
+      when node.instance_of?(Intp::InfixExpression)
+        left = self.eval(node.left)
+        right = self.eval(node.right)
+        return eval_infix_expression(node.operator, left, right)
       when node.instance_of?(Intp::PrefixExpression)
         right = self.eval(node.right)
         return eval_prefix_expression(node.operator, right)
@@ -25,6 +29,15 @@ module Intp
         result = self.eval(s)
       end
       result
+    end
+
+    def self.eval_infix_expression(operator, left, right)
+      case
+      when left.type == Intp::INTEGER_OBJ && right.type == Intp::INTEGER_OBJ
+        return eval_integer_infix_expression(operator, left, right)
+      else
+        return Intp::NIL
+      end
     end
 
     def self.eval_prefix_expression(operator, right)
@@ -58,6 +71,31 @@ module Intp
       int = Intp::Integer.new
       int.value = -(right.value)
       return int
+    end
+
+    def self.eval_integer_infix_expression(operator, left, right)
+      l_val = left.value
+      r_val = right.value
+      case operator
+      when "+"
+        int = Intp::Integer.new
+        int.value = l_val + r_val
+        return int
+      when "-"
+        int = Intp::Integer.new
+        int.value = l_val - r_val
+        return int
+      when "*"
+        int = Intp::Integer.new
+        int.value = l_val * r_val
+        return int
+      when "/"
+        int = Intp::Integer.new
+        int.value = l_val / r_val
+        return int
+      else
+        return Intp::NULL
+      end
     end
 
     def self.native_bool_to_boolean_object(input)
