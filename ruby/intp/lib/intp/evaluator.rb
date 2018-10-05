@@ -31,6 +31,8 @@ module Intp
       case operator
       when "!"
         return eval_bang_operator_expression(right)
+      when "-"
+        return eval_minus_prefix_operator_expression(right)
       else
         return Intp::NILL
       end
@@ -47,6 +49,15 @@ module Intp
       else
         Intp::FALSE
       end
+    end
+
+    def self.eval_minus_prefix_operator_expression(right)
+      if right.type != Intp::INTEGER_OBJ
+        return Intp::NULL
+      end
+      int = Intp::Integer.new
+      int.value = -(right.value)
+      return int
     end
 
     def self.native_bool_to_boolean_object(input)

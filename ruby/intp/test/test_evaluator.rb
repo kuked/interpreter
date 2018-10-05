@@ -16,6 +16,8 @@ class EvaluatorTest < Minitest::Test
     tests = [
       ["5", 5],
       ["10", 10],
+      ["-5", -5],
+      ["-10", -10],
     ]
 
     tests.each do |test|
