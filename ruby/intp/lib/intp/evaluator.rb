@@ -3,22 +3,23 @@ module Intp
     def self.eval(node)
       case
       when node.instance_of?(Intp::Program)
-        return eval_statements(node.statements)
+        eval_statements(node.statements)
       when node.instance_of?(Intp::ExpressionStatement)
-        return self.eval(node.expression)
+        self.eval(node.expression)
       when node.instance_of?(Intp::InfixExpression)
         left = self.eval(node.left)
         right = self.eval(node.right)
-        return eval_infix_expression(node.operator, left, right)
+        eval_infix_expression(node.operator, left, right)
       when node.instance_of?(Intp::PrefixExpression)
         right = self.eval(node.right)
-        return eval_prefix_expression(node.operator, right)
+        eval_prefix_expression(node.operator, right)
       when node.instance_of?(Intp::IntegerLiteral)
-        return Intp::Integer.new(node.value)
+        Intp::Integer.new(node.value)
       when node.instance_of?(Intp::Boolean)
-        return native_bool_to_boolean_object(node.value)
+        native_bool_to_boolean_object(node.value)
+      else
+        nil
       end
-      nil
     end
 
     def self.eval_statements(stmts)
@@ -45,11 +46,11 @@ module Intp
     def self.eval_prefix_expression(operator, right)
       case operator
       when "!"
-        return eval_bang_operator_expression(right)
+        eval_bang_operator_expression(right)
       when "-"
-        return eval_minus_prefix_operator_expression(right)
+        eval_minus_prefix_operator_expression(right)
       else
-        return Intp::NILL
+        Intp::NILL
       end
     end
 
@@ -97,7 +98,7 @@ module Intp
     end
 
     def self.native_bool_to_boolean_object(input)
-      return input ? Intp::TRUE : Intp::FALSE
+      input ? Intp::TRUE : Intp::FALSE
     end
   end
 end
