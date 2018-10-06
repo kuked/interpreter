@@ -32,13 +32,13 @@ module Intp
     def self.eval_infix_expression(operator, left, right)
       case
       when left.type == Intp::INTEGER_OBJ && right.type == Intp::INTEGER_OBJ
-        return eval_integer_infix_expression(operator, left, right)
+        eval_integer_infix_expression(operator, left, right)
       when operator == "=="
         native_bool_to_boolean_object(left == right)
       when operator == "!="
         native_bool_to_boolean_object(left != right)
       else
-        return Intp::NIL
+        Intp::NIL
       end
     end
 
