@@ -78,11 +78,36 @@ class EvaluatorTest < Minitest::Test
     end
   end
 
+  def test_if_else_expressions
+    tests = [
+      ["if (true) { 10 }", 10],
+      ["if (false) { 10 }", nil],
+      ["if (1) { 10 }", 10],
+      ["if (1 < 2) { 10 }", 10],
+      ["if (1 > 2) { 10 }", nil],
+      ["if (1 > 2) { 10 } else { 20 }", 20],
+      ["if (1 < 2) { 10 } else { 20 }", 10],
+    ]
+
+    tests.each do |test|
+      evaluated = do_eval(test[0])
+      if test[1]
+        _test_integer_object(evaluated, test[1])
+      else
+        _test_null_object(evaluated)
+      end
+    end
+  end
+
   def _test_integer_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end
 
   def _test_boolean_object(evaluated, expected)
     assert_equal expected, evaluated.value
+  end
+
+  def _test_null_object(evaluated)
+    assert_equal evaluated, Intp::NULL
   end
 end

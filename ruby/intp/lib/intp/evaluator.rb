@@ -17,6 +17,10 @@ module Intp
         Intp::Integer.new(node.value)
       when node.instance_of?(Intp::Boolean)
         native_bool_to_boolean_object(node.value)
+      when node.instance_of?(Intp::BlockStatement)
+        eval_statements(node.statements)
+      when node.instance_of?(Intp::IfExpression)
+        eval_if_expression(node)
       else
         nil
       end
@@ -97,8 +101,32 @@ module Intp
       end
     end
 
+    def self.eval_if_expression(ie)
+      condition = self.eval(ie.condition)
+      if is_truthy(condition)
+        self.eval(ie.consequence)
+      elsif ie.alternative != nil
+        self.eval(ie.alternative)
+      else
+        Intp::NULL
+      end
+    end
+
     def self.native_bool_to_boolean_object(input)
       input ? Intp::TRUE : Intp::FALSE
+    end
+
+    def self.is_truthy(obj)
+      case obj
+      when Intp::NULL
+        false
+      when Intp::TRUE
+        true
+      when Intp::FALSE
+        false
+      else
+        true
+      end
     end
   end
 end
