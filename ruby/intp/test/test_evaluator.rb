@@ -8,10 +8,6 @@ class EvaluatorTest < Minitest::Test
     Intp::Evaluator.eval(program)
   end
 
-  def check_integer_object(evaluated, expected)
-    assert_equal expected, evaluated.value
-  end
-  
   def test_eval_integer_expression
     tests = [
       ["5", 5],
@@ -33,7 +29,7 @@ class EvaluatorTest < Minitest::Test
 
     tests.each do |test|
       evaluated = do_eval(test[0])
-      check_integer_object(evaluated, test[1])
+      _test_integer_object(evaluated, test[1])
     end
   end
 
@@ -80,6 +76,10 @@ class EvaluatorTest < Minitest::Test
       evaluated = do_eval(test[0])
       _test_boolean_object(evaluated, test[1])
     end
+  end
+
+  def _test_integer_object(evaluated, expected)
+    assert_equal expected, evaluated.value
   end
 
   def _test_boolean_object(evaluated, expected)
