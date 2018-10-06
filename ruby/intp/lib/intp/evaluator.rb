@@ -33,6 +33,10 @@ module Intp
       case
       when left.type == Intp::INTEGER_OBJ && right.type == Intp::INTEGER_OBJ
         return eval_integer_infix_expression(operator, left, right)
+      when operator == "=="
+        native_bool_to_boolean_object(left == right)
+      when operator == "!="
+        native_bool_to_boolean_object(left != right)
       else
         return Intp::NIL
       end
@@ -79,6 +83,14 @@ module Intp
         Intp::Integer.new(left.value * right.value)
       when "/"
         Intp::Integer.new(left.value / right.value)
+      when "<"
+        native_bool_to_boolean_object(left.value < right.value)
+      when ">"
+        native_bool_to_boolean_object(left.value > right.value)
+      when "=="
+        native_bool_to_boolean_object(left.value == right.value)
+      when "!="
+        native_bool_to_boolean_object(left.value != right.value)
       else
         Intp::NULL
       end
