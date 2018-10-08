@@ -3,7 +3,7 @@ module Intp
     def self.eval(node)
       case
       when node.instance_of?(Intp::Program)
-        eval_statements(node.statements)
+        eval_program(node)
       when node.instance_of?(Intp::ExpressionStatement)
         self.eval(node.expression)
       when node.instance_of?(Intp::InfixExpression)
@@ -18,7 +18,7 @@ module Intp
       when node.instance_of?(Intp::Boolean)
         native_bool_to_boolean_object(node.value)
       when node.instance_of?(Intp::BlockStatement)
-        eval_statements(node.statements)
+        eval_block_statement(node)
       when node.instance_of?(Intp::IfExpression)
         eval_if_expression(node)
       when node.instance_of?(Intp::ReturnStatement)
@@ -27,6 +27,17 @@ module Intp
       else
         nil
       end
+    end
+
+    def self.eval_program(program)
+      result = nil
+      program.statements.each do |statement|
+        result = self.eval(statement)
+        if result.instance_of?(Intp::ReturnValue)
+          return result.value
+        end
+      end
+      result
     end
 
     def self.eval_statements(stmts)
@@ -117,6 +128,18 @@ module Intp
       else
         Intp::NULL
       end
+    end
+
+    def self.eval_block_statement(block)
+      result = nil
+      block.statements.each do |statement|
+        result = self.eval(statement)
+
+        if result && result.type == Intp::RETURN_VALUE_OBJ
+          return result
+        end
+      end
+      result
     end
 
     def self.native_bool_to_boolean_object(input)

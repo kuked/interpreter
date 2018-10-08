@@ -100,11 +100,20 @@ class EvaluatorTest < Minitest::Test
   end
 
   def test_return_statements
+    return_statement = <<"EOS"
+    if (10 > 1) {
+       if (10 > 1) {
+          return 10;
+       }
+       return 1;
+    }
+EOS
     tests = [
       ["return 10;", 10],
       ["return 10; 9;", 10],
       ["return 2 * 5; 9;", 10],
       ["9; return 2 * 5; 9;", 10],
+      [return_statement, 10],
     ]
 
     tests.each do |test|
