@@ -99,6 +99,20 @@ class EvaluatorTest < Minitest::Test
     end
   end
 
+  def test_return_statements
+    tests = [
+      ["return 10;", 10],
+      ["return 10; 9;", 10],
+      ["return 2 * 5; 9;", 10],
+      ["9; return 2 * 5; 9;", 10],
+    ]
+
+    tests.each do |test|
+      evaluated = do_eval(test[0])
+      _test_integer_object(evaluated, test[1])
+    end
+  end
+
   def _test_integer_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end

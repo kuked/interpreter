@@ -21,6 +21,9 @@ module Intp
         eval_statements(node.statements)
       when node.instance_of?(Intp::IfExpression)
         eval_if_expression(node)
+      when node.instance_of?(Intp::ReturnStatement)
+        val = self.eval(node.return_value)
+        Intp::ReturnValue.new(val)
       else
         nil
       end
@@ -30,6 +33,10 @@ module Intp
       result = nil
       stmts.each do |s|
         result = self.eval(s)
+
+        if result.instance_of?(Intp::ReturnValue)
+          return result.value
+        end
       end
       result
     end

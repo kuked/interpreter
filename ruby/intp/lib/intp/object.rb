@@ -1,7 +1,8 @@
 module Intp
-  INTEGER_OBJ = "INTEGER"
-  BOOLEAN_OBJ = "BOOLEAN"
-  NULL_OBJ    = "NULL"
+  INTEGER_OBJ      = "INTEGER"
+  BOOLEAN_OBJ      = "BOOLEAN"
+  NULL_OBJ         = "NULL"
+  RETURN_VALUE_OBJ = "RETURN_VALUE"
   
   class Integer
     attr_accessor :value
@@ -46,4 +47,19 @@ module Intp
     end
   end
   NULL = NullObject.new
+
+  class ReturnValue
+    attr_accessor :value
+    def initialize(value)
+      self.value = value
+    end
+
+    def inspect
+      self.value.inspect
+    end
+
+    def type
+      RETURN_VALUE_OBJ
+    end
+  end
 end
