@@ -122,6 +122,35 @@ EOS
     end
   end
 
+  def test_error_handling
+    input = <<"EOS"
+    if (10 > 1) {
+       if (10 > 1) {
+          return true + false;
+       }
+       return 1;
+    }
+EOS
+    tests = [
+      ["5 + true;", "type mismatch: INTEGER + BOOLEAN"],
+      ["5 + true; 5;", "type mismatch: INTEGER + BOOLEAN"],
+      ["-true", "unknown operator: -BOOLEAN"],
+      ["true + false;", "unknown operator: BOOLEAN + BOOLEAN"],
+      ["5; true + false; 5", "unknown operator: BOOLEAN + BOOLEAN"],
+      ["if (10 > 1) { true + false; }", "unknown operator: BOOLEAN + BOOLEAN"],
+      [input, "unknown operator: BOOLEAN + BOOLEAN"],
+    ]
+    tests.each do |test|
+      evaluated = do_eval(test[0])
+      unless evaluated.instance_of?(Intp::Error)
+        print "XXX"
+        next
+      end
+
+      assert_equal test[1], evaluated.message
+    end
+  end
+
   def _test_integer_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end

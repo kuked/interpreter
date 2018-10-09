@@ -3,7 +3,8 @@ module Intp
   BOOLEAN_OBJ      = "BOOLEAN"
   NULL_OBJ         = "NULL"
   RETURN_VALUE_OBJ = "RETURN_VALUE"
-  
+  ERROR_OBJ        = "ERROR"
+
   class Integer
     attr_accessor :value
     def initialize(value)
@@ -60,6 +61,21 @@ module Intp
 
     def type
       RETURN_VALUE_OBJ
+    end
+  end
+
+  class Error
+    attr_accessor :message
+    def initialize(message)
+      self.message = message
+    end
+
+    def inspect
+      "ERROR: #{self.message}"
+    end
+
+    def type
+      ERROR_OBJ
     end
   end
 end

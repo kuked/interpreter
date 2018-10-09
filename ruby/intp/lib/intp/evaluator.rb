@@ -8,11 +8,13 @@ module Intp
         self.eval(node.expression)
       when node.instance_of?(Intp::InfixExpression)
         left = self.eval(node.left)
+        return left if is_error(left)
         right = self.eval(node.right)
+        return right if is_error(right)
         eval_infix_expression(node.operator, left, right)
       when node.instance_of?(Intp::PrefixExpression)
         right = self.eval(node.right)
-        eval_prefix_expression(node.operator, right)
+        is_error(right) ? right : eval_prefix_expression(node.operator, right)
       when node.instance_of?(Intp::IntegerLiteral)
         Intp::Integer.new(node.value)
       when node.instance_of?(Intp::Boolean)
@@ -23,7 +25,7 @@ module Intp
         eval_if_expression(node)
       when node.instance_of?(Intp::ReturnStatement)
         val = self.eval(node.return_value)
-        Intp::ReturnValue.new(val)
+        is_error(val) ? val : Intp::ReturnValue.new(val)
       else
         nil
       end
@@ -33,8 +35,11 @@ module Intp
       result = nil
       program.statements.each do |statement|
         result = self.eval(statement)
-        if result.instance_of?(Intp::ReturnValue)
+        case
+        when result.instance_of?(Intp::ReturnValue)
           return result.value
+        when result.instance_of?(Intp::Error)
+          return result
         end
       end
       result
@@ -60,8 +65,10 @@ module Intp
         native_bool_to_boolean_object(left == right)
       when operator == "!="
         native_bool_to_boolean_object(left != right)
+      when left.type != right.type
+        new_error("type mismatch: #{left.type} #{operator} #{right.type}")
       else
-        Intp::NIL
+        new_error("unknown operator: #{left.type} #{operator} #{right.type}")
       end
     end
 
@@ -72,7 +79,7 @@ module Intp
       when "-"
         eval_minus_prefix_operator_expression(right)
       else
-        Intp::NILL
+        new_error("unknown operator: #{operator}#{right.type}")
       end
     end
 
@@ -91,7 +98,7 @@ module Intp
 
     def self.eval_minus_prefix_operator_expression(right)
       if right.type != Intp::INTEGER_OBJ
-        return Intp::NULL
+        return new_error("unknown operator: -#{right.type}")
       end
       Intp::Integer.new(-(right.value))
     end
@@ -115,12 +122,14 @@ module Intp
       when "!="
         native_bool_to_boolean_object(left.value != right.value)
       else
-        Intp::NULL
+        new_error("unknown operator: #{left.type} #{operator} #{right.type}")
       end
     end
 
     def self.eval_if_expression(ie)
       condition = self.eval(ie.condition)
+      return condition if is_error(condition)
+
       if is_truthy(condition)
         self.eval(ie.consequence)
       elsif ie.alternative != nil
@@ -135,8 +144,11 @@ module Intp
       block.statements.each do |statement|
         result = self.eval(statement)
 
-        if result && result.type == Intp::RETURN_VALUE_OBJ
-          return result
+        if result
+          rt = result.type
+          if rt == Intp::RETURN_VALUE_OBJ || rt == Intp::ERROR_OBJ
+            return result
+          end
         end
       end
       result
@@ -157,6 +169,17 @@ module Intp
       else
         true
       end
+    end
+
+    def self.new_error(message)
+      Intp::Error.new(message)
+    end
+
+    def self.is_error(obj)
+      if obj
+        return obj.type == Intp::ERROR_OBJ
+      end
+      false
     end
   end
 end
