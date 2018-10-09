@@ -31,6 +31,8 @@ module Intp
       end
     end
 
+    private
+
     def self.eval_program(program)
       result = nil
       program.statements.each do |statement|
