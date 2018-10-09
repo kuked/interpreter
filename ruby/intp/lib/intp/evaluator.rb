@@ -1,31 +1,37 @@
 module Intp
   class Evaluator
-    def self.eval(node)
+    def self.eval(node, env)
       case node
       when Intp::Program
-        eval_program(node)
+        eval_program(node, env)
       when Intp::ExpressionStatement
-        self.eval(node.expression)
+        self.eval(node.expression, env)
       when Intp::InfixExpression
-        left = self.eval(node.left)
+        left = self.eval(node.left, env)
         return left if is_error(left)
-        right = self.eval(node.right)
+        right = self.eval(node.right, env)
         return right if is_error(right)
         eval_infix_expression(node.operator, left, right)
       when Intp::PrefixExpression
-        right = self.eval(node.right)
+        right = self.eval(node.right, env)
         is_error(right) ? right : eval_prefix_expression(node.operator, right)
       when Intp::IntegerLiteral
         Intp::Integer.new(node.value)
       when Intp::Boolean
         native_bool_to_boolean_object(node.value)
       when Intp::BlockStatement
-        eval_block_statement(node)
+        eval_block_statement(node, env)
       when Intp::IfExpression
-        eval_if_expression(node)
+        eval_if_expression(node, env)
       when Intp::ReturnStatement
-        val = self.eval(node.return_value)
+        val = self.eval(node.return_value, env)
         is_error(val) ? val : Intp::ReturnValue.new(val)
+      when Intp::LetStatement
+        val = self.eval(node.value, env)
+        return val if is_error(val)
+        env.set(node.name.value, val)
+      when Intp::Identifier
+        eval_identifier(node, env)
       else
         nil
       end
@@ -33,10 +39,10 @@ module Intp
 
     private
 
-    def self.eval_program(program)
+    def self.eval_program(program, env)
       result = nil
       program.statements.each do |statement|
-        result = self.eval(statement)
+        result = self.eval(statement, env)
         case result
         when Intp::ReturnValue
           return result.value
@@ -47,10 +53,10 @@ module Intp
       result
     end
 
-    def self.eval_statements(stmts)
+    def self.eval_statements(stmts, env)
       result = nil
       stmts.each do |s|
-        result = self.eval(s)
+        result = self.eval(s, env)
 
         if result.instance_of?(Intp::ReturnValue)
           return result.value
@@ -128,23 +134,23 @@ module Intp
       end
     end
 
-    def self.eval_if_expression(ie)
-      condition = self.eval(ie.condition)
+    def self.eval_if_expression(ie, env)
+      condition = self.eval(ie.condition, env)
       return condition if is_error(condition)
 
       if is_truthy(condition)
-        self.eval(ie.consequence)
+        self.eval(ie.consequence, env)
       elsif ie.alternative != nil
-        self.eval(ie.alternative)
+        self.eval(ie.alternative, env)
       else
         Intp::NULL
       end
     end
 
-    def self.eval_block_statement(block)
+    def self.eval_block_statement(block, env)
       result = nil
       block.statements.each do |statement|
-        result = self.eval(statement)
+        result = self.eval(statement, env)
 
         if result
           rt = result.type
@@ -154,6 +160,11 @@ module Intp
         end
       end
       result
+    end
+
+    def self.eval_identifier(node, env)
+      val = env.get(node.value)
+      val ? val : new_error("identifier not found: #{node.value}")
     end
 
     def self.native_bool_to_boolean_object(input)

@@ -3,6 +3,7 @@ module Intp
     PROMPT = '>> '
 
     def start
+      env = Environment.new
       loop do
         print PROMPT
         line = gets
@@ -18,7 +19,7 @@ module Intp
 
         program = parser.parse_program
 
-        evaluated = Evaluator.eval(program)
+        evaluated = Evaluator.eval(program, env)
         if evaluated
           puts evaluated.inspect
         end

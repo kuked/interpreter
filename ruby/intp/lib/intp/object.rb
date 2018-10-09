@@ -78,4 +78,20 @@ module Intp
       ERROR_OBJ
     end
   end
+
+  class Environment
+    attr_accessor :store
+    def initialize
+      self.store = {}
+    end
+
+    def get(name)
+      store[name]
+    end
+
+    def set(name, val)
+      store[name] = val
+      val
+    end
+  end
 end

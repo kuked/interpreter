@@ -5,7 +5,7 @@ class EvaluatorTest < Minitest::Test
     l = Intp::Lexer.new(input)
     p = Intp::Parser.new(l)
     program = p.parse_program
-    Intp::Evaluator.eval(program)
+    Intp::Evaluator.eval(program, Intp::Environment.new)
   end
 
   def test_eval_integer_expression
@@ -139,6 +139,7 @@ EOS
       ["5; true + false; 5", "unknown operator: BOOLEAN + BOOLEAN"],
       ["if (10 > 1) { true + false; }", "unknown operator: BOOLEAN + BOOLEAN"],
       [input, "unknown operator: BOOLEAN + BOOLEAN"],
+      ["foobar", "identifier not found: foobar"],
     ]
     tests.each do |test|
       evaluated = do_eval(test[0])
@@ -148,6 +149,19 @@ EOS
       end
 
       assert_equal test[1], evaluated.message
+    end
+  end
+
+  def test_let_statements
+    tests = [
+      ["let a = 5; a;", 5],
+      ["let a = 5 * 5; a;", 25],
+      ["let a = 5; let b = a; b;", 5],
+      ["let a = 5; let b = a; let c = a + b + 5; c;", 15],
+    ]
+    tests.each do |test|
+      evaluated = do_eval(test[0])
+      _test_integer_object(evaluated, test[1])
     end
   end
 
