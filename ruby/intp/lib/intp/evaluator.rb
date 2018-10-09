@@ -1,29 +1,29 @@
 module Intp
   class Evaluator
     def self.eval(node)
-      case
-      when node.instance_of?(Intp::Program)
+      case node
+      when Intp::Program
         eval_program(node)
-      when node.instance_of?(Intp::ExpressionStatement)
+      when Intp::ExpressionStatement
         self.eval(node.expression)
-      when node.instance_of?(Intp::InfixExpression)
+      when Intp::InfixExpression
         left = self.eval(node.left)
         return left if is_error(left)
         right = self.eval(node.right)
         return right if is_error(right)
         eval_infix_expression(node.operator, left, right)
-      when node.instance_of?(Intp::PrefixExpression)
+      when Intp::PrefixExpression
         right = self.eval(node.right)
         is_error(right) ? right : eval_prefix_expression(node.operator, right)
-      when node.instance_of?(Intp::IntegerLiteral)
+      when Intp::IntegerLiteral
         Intp::Integer.new(node.value)
-      when node.instance_of?(Intp::Boolean)
+      when Intp::Boolean
         native_bool_to_boolean_object(node.value)
-      when node.instance_of?(Intp::BlockStatement)
+      when Intp::BlockStatement
         eval_block_statement(node)
-      when node.instance_of?(Intp::IfExpression)
+      when Intp::IfExpression
         eval_if_expression(node)
-      when node.instance_of?(Intp::ReturnStatement)
+      when Intp::ReturnStatement
         val = self.eval(node.return_value)
         is_error(val) ? val : Intp::ReturnValue.new(val)
       else
@@ -37,10 +37,10 @@ module Intp
       result = nil
       program.statements.each do |statement|
         result = self.eval(statement)
-        case
-        when result.instance_of?(Intp::ReturnValue)
+        case result
+        when Intp::ReturnValue
           return result.value
-        when result.instance_of?(Intp::Error)
+        when Intp::Error
           return result
         end
       end
