@@ -190,6 +190,17 @@ EOS
     end
   end
 
+  def test_closures
+    input = <<"EOS"
+    let newAdder = fn(x) {
+        fn(y) { x + y };
+    };
+    let addTwo = newAdder(2);
+    addTwo(2);
+EOS
+    _test_integer_object(do_eval(input), 4)
+  end
+
   def _test_integer_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end
