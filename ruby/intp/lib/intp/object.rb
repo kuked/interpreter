@@ -89,7 +89,7 @@ module Intp
     def get(name)
       obj = store[name]
       if !obj && self.outer
-        self.outer.get(name)
+        return self.outer.get(name)
       end
       obj
     end
