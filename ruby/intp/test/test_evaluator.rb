@@ -165,6 +165,17 @@ EOS
     end
   end
 
+  def test_function_object
+    input = "fn(x) { x + 2; };"
+    evaluated = do_eval(input)
+    assert_instance_of(Intp::Function, evaluated)
+
+    # XXX
+    assert_equal 1, evaluated.parameters.length
+    assert_equal "x", evaluated.parameters[0].to_s
+    assert_equal "(x + 2)", evaluated.body.to_s
+  end
+
   def _test_integer_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end

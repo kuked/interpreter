@@ -32,6 +32,10 @@ module Intp
         env.set(node.name.value, val)
       when Intp::Identifier
         eval_identifier(node, env)
+      when Intp::FunctionLiteral
+        params = node.parameters
+        body = node.body
+        Intp::Function.new(params, body, env)
       else
         nil
       end

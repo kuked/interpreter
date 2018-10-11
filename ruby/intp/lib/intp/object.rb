@@ -4,6 +4,7 @@ module Intp
   NULL_OBJ         = "NULL"
   RETURN_VALUE_OBJ = "RETURN_VALUE"
   ERROR_OBJ        = "ERROR"
+  FUNCTION_OBJ     = "FUNCTION"
 
   class Integer
     attr_accessor :value
@@ -92,6 +93,30 @@ module Intp
     def set(name, val)
       store[name] = val
       val
+    end
+  end
+
+  class Function
+    attr_accessor :parameters, :body, :env
+    def initialize(parameters, body, env)
+      self.parameters = parameters
+      self.body = body
+      self.env = env
+    end
+
+    def inspect
+      params = parameters.map(&:to_s)
+      out = ''
+      out << 'fn'
+      out << '('
+      out << params.join(', ')
+      out << ") {\n"
+      out << body.to_s
+      out << "\n}"
+    end
+
+    def type
+      FUNCTION_OBJ
     end
   end
 end
