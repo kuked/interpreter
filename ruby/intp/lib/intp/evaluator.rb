@@ -36,6 +36,14 @@ module Intp
         params = node.parameters
         body = node.body
         Intp::Function.new(params, body, env)
+      when Intp::CallExpression
+        function = self.eval(node.function, env)
+        return function if is_error(function)
+        args = eval_expression(node.arguments, env)
+        if args.length == 1 && is_error(args[0])
+          return args[0]
+        end
+        apply_function(function, args)
       else
         nil
       end
@@ -171,6 +179,18 @@ module Intp
       val ? val : new_error("identifier not found: #{node.value}")
     end
 
+    def self.eval_expression(exps, env)
+      result = []
+      exps.each do |exp|
+        evaluated = self.eval(exp, env)
+        if is_error(evaluated)
+          return evaluated
+        end
+        result << evaluated
+      end
+      result
+    end
+
     def self.native_bool_to_boolean_object(input)
       input ? Intp::TRUE : Intp::FALSE
     end
@@ -197,6 +217,26 @@ module Intp
         return obj.type == Intp::ERROR_OBJ
       end
       false
+    end
+
+    def self.apply_function(fn, args)
+      return new_error("not a function: #{fn.type}") unless fn.instance_of?(Intp::Function)
+      extended_env = extend_function_env(fn, args)
+      evaluated = self.eval(fn.body, extended_env)
+      unwrap_return_value(evaluated)
+    end
+
+    def self.extend_function_env(fn, args)
+      env = Intp::Environment.new_enclosed_environment(fn.env)
+      fn.parameters.each_with_index do |param, i|
+        env.set(param.value, args[i])
+      end
+      env
+    end
+
+    def self.unwrap_return_value(obj)
+      return obj.value if obj.instance_of?(Intp::ReturnValue)
+      obj
     end
   end
 end

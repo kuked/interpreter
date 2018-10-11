@@ -81,18 +81,28 @@ module Intp
   end
 
   class Environment
-    attr_accessor :store
+    attr_accessor :store, :outer
     def initialize
       self.store = {}
     end
 
     def get(name)
-      store[name]
+      obj = store[name]
+      if !obj && self.outer
+        self.outer.get(name)
+      end
+      obj
     end
 
     def set(name, val)
       store[name] = val
       val
+    end
+
+    def self.new_enclosed_environment(outer)
+      env = Environment.new
+      env.outer = outer
+      env
     end
   end
 

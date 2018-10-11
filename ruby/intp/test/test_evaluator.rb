@@ -176,6 +176,20 @@ EOS
     assert_equal "(x + 2)", evaluated.body.to_s
   end
 
+  def test_function_application
+    tests = [
+      ["let identity = fn(x) { x; }; identity(5);", 5],
+      ["let identity = fn(x) { return x; }; identity(5);", 5],
+      ["let double = fn(x) { x * 2; }; double(5);", 10],
+      ["let add = fn(x, y) { x + y; }; add(5, 5);", 10],
+      ["let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20],
+      ["fn(x) { x; }(5)", 5],
+    ]
+    tests.each do |test|
+      _test_integer_object(do_eval(test[0]), test[1])
+    end
+  end
+
   def _test_integer_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end
