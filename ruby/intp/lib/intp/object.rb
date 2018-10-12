@@ -5,6 +5,7 @@ module Intp
   RETURN_VALUE_OBJ = "RETURN_VALUE"
   ERROR_OBJ        = "ERROR"
   FUNCTION_OBJ     = "FUNCTION"
+  STRING_OBJ       = "STRING"
 
   class Integer
     attr_accessor :value
@@ -127,6 +128,21 @@ module Intp
 
     def type
       FUNCTION_OBJ
+    end
+  end
+
+  class String
+    attr_accessor :value
+    def initialize(value)
+      self.value = value
+    end
+
+    def type
+      STRING_OBJ
+    end
+
+    def inspect
+      value
     end
   end
 end

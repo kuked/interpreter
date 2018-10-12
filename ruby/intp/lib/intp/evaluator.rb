@@ -44,6 +44,8 @@ module Intp
           return args[0]
         end
         apply_function(function, args)
+      when Intp::StringLiteral
+        Intp::String.new(node.value)
       else
         nil
       end

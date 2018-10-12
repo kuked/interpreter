@@ -201,6 +201,13 @@ EOS
     _test_integer_object(do_eval(input), 4)
   end
 
+  def test_string_literal
+    input = '"Hello World!"'
+    evaluated = do_eval(input)
+    assert_instance_of(Intp::String, evaluated)
+    assert_equal "Hello World!", evaluated.value
+  end
+
   def _test_integer_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end
