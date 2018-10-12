@@ -6,6 +6,7 @@ module Intp
   ERROR_OBJ        = "ERROR"
   FUNCTION_OBJ     = "FUNCTION"
   STRING_OBJ       = "STRING"
+  BUILTIN_OBJ      = "BUILTIN"
 
   class Integer
     attr_accessor :value
@@ -143,6 +144,17 @@ module Intp
 
     def inspect
       value
+    end
+  end
+
+  class Builtin
+    attr_accessor :fn
+    def type
+      BUILTIN_OBJ
+    end
+
+    def inspect
+      "builtin function"
     end
   end
 end
