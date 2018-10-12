@@ -140,6 +140,7 @@ EOS
       ["if (10 > 1) { true + false; }", "unknown operator: BOOLEAN + BOOLEAN"],
       [input, "unknown operator: BOOLEAN + BOOLEAN"],
       ["foobar", "identifier not found: foobar"],
+      ['"Hello" - "World"', "unknown operator: STRING - STRING"],
     ]
     tests.each do |test|
       evaluated = do_eval(test[0])
@@ -206,6 +207,13 @@ EOS
     evaluated = do_eval(input)
     assert_instance_of(Intp::String, evaluated)
     assert_equal "Hello World!", evaluated.value
+  end
+
+  def test_string_concatenation
+    input = '"Hello" + " " + "World!"'
+    evaluated = do_eval(input)
+    assert_instance_of(Intp::String, evaluated)
+    assert_equal "Hello World!", evaluated.value, "String has wrong value. got=#{evaluated.value}"
   end
 
   def _test_integer_object(evaluated, expected)

@@ -89,6 +89,8 @@ module Intp
         native_bool_to_boolean_object(left != right)
       when left.type != right.type
         new_error("type mismatch: #{left.type} #{operator} #{right.type}")
+      when left.type == Intp::STRING_OBJ && right.type == Intp::STRING_OBJ
+        eval_string_infix_expression(operator, left, right)
       else
         new_error("unknown operator: #{left.type} #{operator} #{right.type}")
       end
@@ -191,6 +193,13 @@ module Intp
         result << evaluated
       end
       result
+    end
+
+    def self.eval_string_infix_expression(operator, left, right)
+      if operator != "+"
+        return new_error("unknown operator: #{left.type} #{operator} #{right.type}")
+      end
+      Intp::String.new(left.value + right.value)
     end
 
     def self.native_bool_to_boolean_object(input)
