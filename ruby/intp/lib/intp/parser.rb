@@ -28,6 +28,7 @@ module Intp
       register_prefix(Intp::Token::LPAREN, :parse_grouped_expression)
       register_prefix(Intp::Token::IF, :parse_if_expression)
       register_prefix(Intp::Token::FUNCTION, :parse_function_literal)
+      register_prefix(Intp::Token::STRING, :parse_string_literal)
       register_infix(Intp::Token::PLUS, :parse_infix_expression)
       register_infix(Intp::Token::MINUS, :parse_infix_expression)
       register_infix(Intp::Token::SLASH, :parse_infix_expression)
@@ -229,6 +230,10 @@ module Intp
       return nil unless expect_peek(Intp::Token::LBRACE)
       lit.body = parse_block_statement
       lit
+    end
+
+    def parse_string_literal
+      Intp::StringLiteral.new(@cur_token, @cur_token.literal)
     end
 
     def parse_function_parameters

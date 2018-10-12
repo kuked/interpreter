@@ -172,4 +172,20 @@ module Intp
       out << ')'
     end
   end
+
+  class StringLiteral
+    attr_accessor :token, :value
+    def initialize(token, value)
+      self.token = token
+      self.value = value
+    end
+
+    def token_literal
+      token.literal
+    end
+
+    def to_s
+      token.literal
+    end
+  end
 end

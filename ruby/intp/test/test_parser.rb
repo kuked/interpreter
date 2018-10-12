@@ -233,7 +233,19 @@ EOS
     assert_equal body_statement.expression.operator, '+'
     assert_equal body_statement.expression. right.value, 'y'
   end
-  
+
+  def test_string_literal
+    input = '"hello world!"'
+    l = Intp::Lexer.new(input)
+    p = Intp::Parser.new(l)
+    program = p.parse_program
+    check_parse_errors(p)
+
+    stmt = program.statements[0]
+    literal = stmt.expression
+    assert_equal "hello world!", literal.value
+  end
+
   def check_parse_errors(parser)
     errors = parser.errors
     return if errors.length.zero?
