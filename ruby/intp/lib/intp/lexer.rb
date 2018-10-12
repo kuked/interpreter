@@ -19,10 +19,10 @@ module Intp
           literal = ch + @ch
           tok = Token.new(Token::EQ, literal)
         else
-          tok = Token.new(Token::ASSIGN, @ch)        
+          tok = Token.new(Token::ASSIGN, @ch)
         end
       when '+'
-        tok = Token.new(Token::PLUS, @ch)        
+        tok = Token.new(Token::PLUS, @ch)
       when '-'
         tok = Token.new(Token::MINUS, @ch)
       when '!'
@@ -32,7 +32,7 @@ module Intp
           literal = ch + @ch
           tok = Token.new(Token::NOT_EQ, literal)
         else
-          tok = Token.new(Token::BANG, @ch)        
+          tok = Token.new(Token::BANG, @ch)
         end
       when '/'
         tok = Token.new(Token::SLASH, @ch)
@@ -43,17 +43,19 @@ module Intp
       when '>'
         tok = Token.new(Token::GT, @ch)
       when ';'
-        tok = Token.new(Token::SEMICOLON, @ch)        
+        tok = Token.new(Token::SEMICOLON, @ch)
       when ','
-        tok = Token.new(Token::COMMA, @ch)        
+        tok = Token.new(Token::COMMA, @ch)
       when '('
-        tok = Token.new(Token::LPAREN, @ch)        
+        tok = Token.new(Token::LPAREN, @ch)
       when ')'
-        tok = Token.new(Token::RPAREN, @ch)        
+        tok = Token.new(Token::RPAREN, @ch)
       when '{'
-        tok = Token.new(Token::LBRACE, @ch)        
+        tok = Token.new(Token::LBRACE, @ch)
       when '}'
-        tok = Token.new(Token::RBRACE, @ch)        
+        tok = Token.new(Token::RBRACE, @ch)
+      when '"'
+        tok = Token.new(Token::STRING, read_string)
       when nil
         tok = Token.new(Token::EOF, '')
       else
@@ -102,6 +104,15 @@ module Intp
     def read_number
       position = @position
       read_char while digit?
+      @input[position, (@position - position)]
+    end
+
+    def read_string
+      position = @position + 1
+      loop do
+        read_char
+        break if (@ch == '"' || @ch == '')
+      end
       @input[position, (@position - position)]
     end
 

@@ -22,6 +22,8 @@ class LexerTest < Minitest::Test
 
     10 == 10;
     10 != 9;
+    "foobar"
+    "foo bar"
 EOS
 
     tests = [
@@ -98,11 +100,10 @@ EOS
       [Intp::Token::NOT_EQ, '!='],
       [Intp::Token::INT, '9'],
       [Intp::Token::SEMICOLON, ';'],
+      [Intp::Token::STRING, 'foobar'],
+      [Intp::Token::STRING, 'foo bar'],
       [Intp::Token::EOF, ''],
     ]
-
-    10 == 10;
-    10 != 9;
 
     l = Intp::Lexer.new(input)
 
