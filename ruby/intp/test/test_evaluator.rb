@@ -216,6 +216,28 @@ EOS
     assert_equal "Hello World!", evaluated.value, "String has wrong value. got=#{evaluated.value}"
   end
 
+  def test_builtin_functions
+    tests = [
+      ['len("")', 0],
+      ['len("four")', 4],
+      ['len("hello world")', 11],
+      ['len(1)', "argument to `len` not supported, got INTEGER"],
+    ]
+    tests.each do |test|
+      evaluated = do_eval(test[0])
+      case test[1]
+      when Integer
+        _test_integer_object evaluated, test[1]
+      when String
+        unless evaluated.instance_of?(Intp::Error)
+         STDERR.puts "object is not Error. got=#{evaluated.class}"
+         next
+        end
+        assert_equal test[1], evaluated.message
+      end
+    end
+  end
+
   def _test_integer_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end

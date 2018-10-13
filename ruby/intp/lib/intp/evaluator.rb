@@ -180,7 +180,10 @@ module Intp
 
     def self.eval_identifier(node, env)
       val = env.get(node.value)
-      val ? val : new_error("identifier not found: #{node.value}")
+      return val if val
+
+      builtin = Intp::Builtins.fetch(node.value)
+      builtin ? builtin : new_error("identifier not found: #{node.value}")
     end
 
     def self.eval_expression(exps, env)
@@ -231,10 +234,16 @@ module Intp
     end
 
     def self.apply_function(fn, args)
-      return new_error("not a function: #{fn.type}") unless fn.instance_of?(Intp::Function)
-      extended_env = extend_function_env(fn, args)
-      evaluated = self.eval(fn.body, extended_env)
-      unwrap_return_value(evaluated)
+      case fn
+      when Intp::Function
+        extended_env = extend_function_env(fn, args)
+        evaluated = self.eval(fn.body, extended_env)
+        unwrap_return_value evaluated
+      when Intp::Builtin
+        fn.fn.call(args)
+      else
+        new_error("not a function: #{fn.type}")
+      end
     end
 
     def self.extend_function_env(fn, args)

@@ -149,6 +149,10 @@ module Intp
 
   class Builtin
     attr_accessor :fn
+    def initialize(fn)
+      self.fn = fn
+    end
+
     def type
       BUILTIN_OBJ
     end

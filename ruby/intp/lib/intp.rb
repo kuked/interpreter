@@ -1,4 +1,5 @@
 require 'intp/ast'
+require 'intp/builtins'
 require 'intp/evaluator'
 require 'intp/lexer'
 require 'intp/object'
