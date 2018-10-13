@@ -27,6 +27,9 @@ module Intp
     LBRACE = '{'
     RBRACE = '}'
 
+    LBRACKET = '['
+    RBRACKET = ']'
+
     FUNCTION = 'FUNCTION'
     LET      = 'LET'
     TRUE     = 'TRUE'

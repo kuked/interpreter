@@ -24,6 +24,7 @@ class LexerTest < Minitest::Test
     10 != 9;
     "foobar"
     "foo bar"
+    [1, 2];
 EOS
 
     tests = [
@@ -102,6 +103,12 @@ EOS
       [Intp::Token::SEMICOLON, ';'],
       [Intp::Token::STRING, 'foobar'],
       [Intp::Token::STRING, 'foo bar'],
+      [Intp::Token::LBRACKET, '['],
+      [Intp::Token::INT, '1'],
+      [Intp::Token::COMMA, ','],
+      [Intp::Token::INT, '2'],
+      [Intp::Token::RBRACKET, ']'],
+      [Intp::Token::SEMICOLON, ';'],
       [Intp::Token::EOF, ''],
     ]
 

@@ -54,6 +54,10 @@ module Intp
         tok = Token.new(Token::LBRACE, @ch)
       when '}'
         tok = Token.new(Token::RBRACE, @ch)
+      when '['
+        tok = Token.new(Token::LBRACKET, @ch)
+      when ']'
+        tok = Token.new(Token::RBRACKET, @ch)
       when '"'
         tok = Token.new(Token::STRING, read_string)
       when nil
