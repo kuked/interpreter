@@ -18,7 +18,7 @@ module Intp
                 Intp::Evaluator.new_error("argument to `len` not supported, got #{args[0].type}")
               end
             end
-          },
+          }
         ),
         'first' => Intp::Builtin.new(
           proc { |args|
@@ -50,6 +50,36 @@ module Intp
               else
                 Intp::NULL
               end
+            end
+          }
+        ),
+        'rest' => Intp::Builtin.new(
+          proc { |args|
+            if args.length != 1
+              Intp::Evaluator.new_error("wrong number of arguments. got=#{args.length}, want=1")
+            elsif args[0].type != Intp::ARRAY_OBJ
+              Intp::Evaluator.new_error("argument to `rest` must be ARRAY, got #{args[0].type}")
+            else
+              arr = args[0]
+              length = arr.elements.length
+              if length > 0
+                Intp::Array.new(arr.elements[1, length-1])
+              else
+                Intp::NULL
+              end
+            end
+          }
+        ),
+        'push' => Intp::Builtin.new(
+          proc { |args|
+            if args.length != 2
+              Intp::Evaluator.new_error("wrong number of arguments. got=#{args.length}, want=2")
+            elsif args[0].type != Intp::ARRAY_OBJ
+              Intp::Evaluator.new_error("argument to `push` must be ARRAY, got #{args[0].type}")
+            else
+              arr = args[0]
+              new_elements = arr.elements.dup
+              Intp::Array.new(new_elements.push args[1])
             end
           }
         ),
