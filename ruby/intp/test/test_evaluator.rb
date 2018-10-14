@@ -251,6 +251,30 @@ EOS
     _test_integer_object result.elements[2], 6
   end
 
+  def test_array_index_expression
+    tests = [
+      ['[1, 2, 3][0]', 1],
+      ['[1, 2, 3][1]', 2],
+      ['[1, 2, 3][2]', 3],
+      ['let i = 0; [1][i];', 1],
+      ['[1, 2, 3][1 + 1];', 3],
+      ['let myArray = [1, 2, 3]; myArray[2];', 3],
+      ['let myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];', 6],
+      ['let myArray = [1, 2, 3]; let i = myArray[0]; myArray[i]', 2],
+      ['[1, 2, 3][3]', nil],
+      ['[1, 2, 3][-1]', nil],
+    ]
+
+    tests.each do |test|
+      evaluated = do_eval(test[0])
+      unless test[1].nil?
+        _test_integer_object evaluated, test[1]
+      else
+        _test_null_object evaluated
+      end
+    end
+  end
+
   def _test_integer_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end

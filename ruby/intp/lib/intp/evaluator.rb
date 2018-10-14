@@ -50,6 +50,13 @@ module Intp
         elements = eval_expression(node.elements, env)
         return elements[0] if (elements.length == 1 && is_error(elements[0]))
         Intp::Array.new(elements)
+      when Intp::IndexExpression
+        left = self.eval(node.left, env)
+        return left if is_error(left)
+        index = self.eval(node.index, env)
+        return index if is_error(index)
+
+        eval_index_expression(left, index)
       else
         nil
       end
@@ -207,6 +214,23 @@ module Intp
         return new_error("unknown operator: #{left.type} #{operator} #{right.type}")
       end
       Intp::String.new(left.value + right.value)
+    end
+
+    def self.eval_index_expression(left, index)
+      case
+      when left.type == Intp::ARRAY_OBJ && index.type == Intp::INTEGER_OBJ
+        eval_array_index_expression(left, index)
+      else
+        new_error("index operator not supported: #{left.type}")
+      end
+    end
+
+    def self.eval_array_index_expression(array, index)
+      idx = index.value
+      max = array.elements.length - 1
+      return Intp::NULL if (idx < 0 || idx > max)
+
+      array.elements[idx]
     end
 
     def self.native_bool_to_boolean_object(input)
