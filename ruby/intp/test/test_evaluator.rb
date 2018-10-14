@@ -238,6 +238,19 @@ EOS
     end
   end
 
+  def test_array_literals
+    input = '[1, 2 * 2, 3 + 3]'
+    evaluated = do_eval(input)
+
+    result = evaluated
+    assert_instance_of Intp::Array, result
+    assert_equal 3, result.elements.length
+
+    _test_integer_object result.elements[0], 1
+    _test_integer_object result.elements[1], 4
+    _test_integer_object result.elements[2], 6
+  end
+
   def _test_integer_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end

@@ -7,6 +7,7 @@ module Intp
   FUNCTION_OBJ     = "FUNCTION"
   STRING_OBJ       = "STRING"
   BUILTIN_OBJ      = "BUILTIN"
+  ARRAY_OBJ        = "ARRAY"
 
   class Integer
     attr_accessor :value
@@ -159,6 +160,24 @@ module Intp
 
     def inspect
       "builtin function"
+    end
+  end
+
+  class Array
+    attr_accessor :elements
+    def initialize(elements)
+      self.elements = elements
+    end
+
+    def type
+      ARRAY_OBJ
+    end
+
+    def inspect
+      out = ''
+      out << '['
+      out << elements.map(&:inspect).join(', ')
+      out << ']'
     end
   end
 end

@@ -46,6 +46,10 @@ module Intp
         apply_function(function, args)
       when Intp::StringLiteral
         Intp::String.new(node.value)
+      when Intp::ArrayLiteral
+        elements = eval_expression(node.elements, env)
+        return elements[0] if (elements.length == 1 && is_error(elements[0]))
+        Intp::Array.new(elements)
       else
         nil
       end
