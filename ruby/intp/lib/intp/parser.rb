@@ -29,6 +29,7 @@ module Intp
       register_prefix(Intp::Token::IF, :parse_if_expression)
       register_prefix(Intp::Token::FUNCTION, :parse_function_literal)
       register_prefix(Intp::Token::STRING, :parse_string_literal)
+      register_prefix(Intp::Token::LBRACKET, :parse_array_literal)
       register_infix(Intp::Token::PLUS, :parse_infix_expression)
       register_infix(Intp::Token::MINUS, :parse_infix_expression)
       register_infix(Intp::Token::SLASH, :parse_infix_expression)
@@ -236,6 +237,12 @@ module Intp
       Intp::StringLiteral.new(@cur_token, @cur_token.literal)
     end
 
+    def parse_array_literal
+      token = @cur_token
+      elements = parse_expression_list(Intp::Token::RBRACKET)
+      Intp::ArrayLiteral.new(token, elements)
+    end
+
     def parse_function_parameters
       identifiers = []
       if peek_token_is(Intp::Token::RPAREN)
@@ -260,7 +267,7 @@ module Intp
       exp = Intp::CallExpression.new
       exp.token = @cur_token
       exp.function = function
-      exp.arguments = parse_call_arguments
+      exp.arguments = parse_expression_list(Intp::Token::RPAREN)
       exp
     end
 
@@ -280,7 +287,25 @@ module Intp
       return nil unless expect_peek(Intp::Token::RPAREN)
       args
     end
-    
+
+    def parse_expression_list(token)
+      list = []
+      if peek_token_is(token)
+        next_token
+        return list
+      end
+
+      next_token
+      list << parse_expression(LOWEST)
+      while peek_token_is(Intp::Token::COMMA)
+        next_token
+        next_token
+        list << parse_expression(LOWEST)
+      end
+      return nil unless expect_peek(token)
+      list
+    end
+
     def cur_token_is(type)
       @cur_token.type == type
     end

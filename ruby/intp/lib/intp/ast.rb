@@ -188,4 +188,23 @@ module Intp
       token.literal
     end
   end
+
+  class ArrayLiteral
+    attr_accessor :token, :elements
+    def initialize(token, elements)
+      self.token = token
+      self.elements = elements
+    end
+
+    def token_literal
+      token.literal
+    end
+
+    def to_s
+      out = ''
+      out << '['
+      out << elements.map(&:to_s).join(', ')
+      out << ']'
+    end
+  end
 end
