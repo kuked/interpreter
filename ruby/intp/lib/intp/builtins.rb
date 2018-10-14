@@ -10,6 +10,8 @@ module Intp
               Intp::Evaluator.new_error("wrong number of arguments. got=#{args.length}, want=1")
             else
               case args[0]
+              when Intp::Array
+                Intp::Integer.new(args[0].elements.length)
               when Intp::String
                 Intp::Integer.new(args[0].value.length)
               else
