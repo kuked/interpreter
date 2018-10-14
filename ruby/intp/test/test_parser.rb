@@ -155,6 +155,8 @@ EOS
       ["a + add(b * c) + d", "((a + add((b * c))) + d)"],
       ["add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))", "add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))"],
       ["add(a + b + c * d / f + g)", "add((((a + b) + ((c * d) / f)) + g))"],
+      ["a * [1, 2, 3, 4][b * c] * d", "((a * ([1, 2, 3, 4][(b * c)])) * d)"],
+      ["add(a * b[2], b[1], 2 * [1, 2][1])", "add((a * (b[2])), (b[1]), (2 * ([1, 2][1])))"],
     ]
 
     tests.each do |test|
@@ -261,6 +263,25 @@ EOS
 
     assert_equal 1, array.elements[0].value
     # TODO
+  end
+
+  def test_parsing_index_expression
+    input = 'myArray[1 + 1]'
+    l = Intp::Lexer.new(input)
+    p = Intp::Parser.new(l)
+    program = p.parse_program
+    check_parse_errors(p)
+
+    stmt = program.statements[0]
+    assert_instance_of Intp::IndexExpression, stmt.expression
+
+    index_exp = stmt.expression
+    assert_equal 'myArray', index_exp.left.value
+
+    # TODO
+    assert_equal 1, index_exp.index.left.value
+    assert_equal '+', index_exp.index.operator
+    assert_equal 1, index_exp.index.right.value
   end
 
   def check_parse_errors(parser)

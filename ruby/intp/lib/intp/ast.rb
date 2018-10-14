@@ -207,4 +207,21 @@ module Intp
       out << ']'
     end
   end
+
+  class IndexExpression
+    attr_accessor :token, :left, :index
+
+    def token_literal
+      token.literal
+    end
+
+    def to_s
+      out = ''
+      out << '('
+      out << left.to_s
+      out << '['
+      out << index.to_s
+      out << '])'
+    end
+  end
 end

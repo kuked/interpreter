@@ -7,6 +7,7 @@ module Intp
     PRODUCT     = 4
     PREFIX      = 5
     CALL        = 6
+    INDEX       = 7
 
     @@prefix_parse_fns = {}
     @@infix_parse_fns = {}
@@ -39,6 +40,7 @@ module Intp
       register_infix(Intp::Token::LT, :parse_infix_expression)
       register_infix(Intp::Token::GT, :parse_infix_expression)
       register_infix(Intp::Token::LPAREN, :parse_call_expression)
+      register_infix(Intp::Token::LBRACKET, :parse_index_expression)
       
       @@precedences ||= {
         Intp::Token::EQ => EQUALS,
@@ -50,6 +52,7 @@ module Intp
         Intp::Token::SLASH => PRODUCT,
         Intp::Token::ASTERISK => PRODUCT,
         Intp::Token::LPAREN => CALL,
+        Intp::Token::LBRACKET => INDEX,
       }
     end
 
@@ -304,6 +307,18 @@ module Intp
       end
       return nil unless expect_peek(token)
       list
+    end
+
+    def parse_index_expression(left)
+      exp = Intp::IndexExpression.new
+      exp.token = @cur_token
+      exp.left = left
+
+      next_token
+      exp.index = parse_expression(LOWEST)
+      return nil unless expect_peek(Intp::Token::RBRACKET)
+
+      exp
     end
 
     def cur_token_is(type)
