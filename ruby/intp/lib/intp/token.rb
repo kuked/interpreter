@@ -14,6 +14,7 @@ module Intp
     ASTERISK  = '*'
     SLASH     = '/'
     COMMA     = ','
+    COLON     = ':'
     SEMICOLON = ';'
 
     LT = '<'

@@ -60,6 +60,8 @@ module Intp
         tok = Token.new(Token::RBRACKET, @ch)
       when '"'
         tok = Token.new(Token::STRING, read_string)
+      when ':'
+        tok = Token.new(Token::COLON, @ch)
       when nil
         tok = Token.new(Token::EOF, '')
       else
