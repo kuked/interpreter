@@ -17,7 +17,8 @@ module Intp
     end
 
     def to_s
-      out = token_literal + ' '
+      out = ''
+      out << token_literal + ' '
       out << name.to_s + ' = '
       out << value.to_s if value
       out << ';'
@@ -41,6 +42,7 @@ module Intp
     end
 
     def to_s
+      out = ''
       out = token_literal + ' '
       out << value.to_s if value
       out << ';'
@@ -76,7 +78,8 @@ module Intp
     end
 
     def to_s
-      out = '('
+      out = ''
+      out << '('
       out << operator
       out << right.to_s
       out << ')'
@@ -90,7 +93,8 @@ module Intp
     end
 
     def to_s
-      out = '('
+      out = ''
+      out << '('
       out << left.to_s
       out << ' ' + operator + ' '
       out << right.to_s
@@ -116,7 +120,8 @@ module Intp
     end
 
     def to_s
-      out = 'if'
+      out = ''
+      out << 'if'
       out << condition.to_s
       out << ' '
       out << consequence.to_s
@@ -166,7 +171,8 @@ module Intp
     end
 
     def to_s
-      out = function.to_s
+      out = ''
+      out << function.to_s
       out << '('
       out << arguments.map(&:to_s).join(', ')
       out << ')'
