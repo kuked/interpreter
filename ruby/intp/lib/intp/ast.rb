@@ -230,4 +230,25 @@ module Intp
       out << '])'
     end
   end
+
+  class HashLiteral
+    attr_accessor :token, :pairs
+    def initialize(token, pairs)
+      self.token = token
+      self.pairs = pairs
+    end
+
+    def token_literal
+      token.literal
+    end
+
+    def to_s
+      kv = []
+      pairs.each { |k, v| kv.push("#{k.to_s}:#{v.to_s}") }
+      out = ''
+      out << '{'
+      out << kv.join(', ')
+      out << '}'
+    end
+  end
 end

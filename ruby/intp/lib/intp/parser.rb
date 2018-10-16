@@ -31,6 +31,7 @@ module Intp
       register_prefix(Intp::Token::FUNCTION, :parse_function_literal)
       register_prefix(Intp::Token::STRING, :parse_string_literal)
       register_prefix(Intp::Token::LBRACKET, :parse_array_literal)
+      register_prefix(Intp::Token::LBRACE, :parse_hash_literal)
       register_infix(Intp::Token::PLUS, :parse_infix_expression)
       register_infix(Intp::Token::MINUS, :parse_infix_expression)
       register_infix(Intp::Token::SLASH, :parse_infix_expression)
@@ -319,6 +320,25 @@ module Intp
       return nil unless expect_peek(Intp::Token::RBRACKET)
 
       exp
+    end
+
+    def parse_hash_literal
+      hash = Intp::HashLiteral.new(@cur_token, {})
+      until peek_token_is(Intp::Token::RBRACE)
+        next_token
+        key = parse_expression(LOWEST)
+        return nil unless expect_peek(Intp::Token::COLON)
+
+        next_token
+        value = parse_expression(LOWEST)
+
+        hash.pairs[key] = value
+        return nil if (!peek_token_is(Intp::Token::RBRACE) && !expect_peek(Intp::Token::COMMA))
+      end
+
+      return nil unless expect_peek(Intp::Token::RBRACE)
+
+      hash
     end
 
     def cur_token_is(type)

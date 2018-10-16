@@ -284,6 +284,58 @@ EOS
     assert_equal 1, index_exp.index.right.value
   end
 
+  def test_parsing_hash_literal_string_keys
+    input = '{"one": 1, "two": 2, "three": 3}'
+    l = Intp::Lexer.new(input)
+    p = Intp::Parser.new(l)
+    program = p.parse_program
+    check_parse_errors(p)
+
+    stmt = program.statements[0]
+    assert_instance_of Intp::HashLiteral, stmt.expression
+
+    hash = stmt.expression
+    assert_equal 3, hash.pairs.length
+
+    expected = { "one" => 1, "two" => 2, "three" => 3 }
+    hash.pairs.each do |k, v|
+      assert_instance_of Intp::StringLiteral, k
+      assert_equal expected[k.to_s], v.value
+    end
+  end
+
+  def test_parsing_empty_hash_literal
+    input = '{}'
+    l = Intp::Lexer.new(input)
+    p = Intp::Parser.new(l)
+    program = p.parse_program
+    check_parse_errors(p)
+
+    stmt = program.statements[0]
+    assert_instance_of Intp::HashLiteral, stmt.expression
+
+    hash = stmt.expression
+    assert_equal 0, hash.pairs.length
+  end
+
+  def test_parsing_hash_literal_with_expressions
+    input = '{"one": 0 + 1, "two": 10 - 8, "three": 15 / 5}'
+    l = Intp::Lexer.new(input)
+    p = Intp::Parser.new(l)
+    program = p.parse_program
+    check_parse_errors(p)
+
+    stmt = program.statements[0]
+    assert_instance_of Intp::HashLiteral, stmt.expression
+
+    hash = stmt.expression
+    assert_equal 3, hash.pairs.length
+
+    # TODO
+    tests = {
+    }
+  end
+
   def check_parse_errors(parser)
     errors = parser.errors
     return if errors.length.zero?
