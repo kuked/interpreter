@@ -56,9 +56,10 @@ module Intp
         'else'   => ELSE,
         'return' => RETURN,
       }
+      @@keywords.default = IDENT
 
       def lookup_ident(ident)
-        @@keywords[ident] || IDENT
+        @@keywords[ident]
       end
     end
   end

@@ -142,21 +142,21 @@ module Intp
 
     def self.eval_integer_infix_expression(operator, left, right)
       case operator
-      when "+"
+      when '+'
         Intp::Integer.new(left.value + right.value)
-      when "-"
+      when '-'
         Intp::Integer.new(left.value - right.value)
-      when "*"
+      when '*'
         Intp::Integer.new(left.value * right.value)
-      when "/"
+      when '/'
         Intp::Integer.new(left.value / right.value)
-      when "<"
+      when '<'
         native_bool_to_boolean_object(left.value < right.value)
-      when ">"
+      when '>'
         native_bool_to_boolean_object(left.value > right.value)
-      when "=="
+      when '=='
         native_bool_to_boolean_object(left.value == right.value)
-      when "!="
+      when '!='
         native_bool_to_boolean_object(left.value != right.value)
       else
         new_error("unknown operator: #{left.type} #{operator} #{right.type}")

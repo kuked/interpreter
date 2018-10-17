@@ -10,14 +10,12 @@ module Intp
     INDEX       = 7
 
     @@prefix_parse_fns = {}
-    @@infix_parse_fns = {}
+    @@infix_parse_fns  = {}
     
     attr_accessor :lexer, :cur_token, :peek_token, :errors
     def initialize(lexer)
       @lexer = lexer
-      2.times do
-        next_token
-      end
+      2.times { next_token }
       @errors = []
   
       register_prefix(Intp::Token::IDENT, :parse_identifier)
@@ -44,15 +42,15 @@ module Intp
       register_infix(Intp::Token::LBRACKET, :parse_index_expression)
       
       @@precedences ||= {
-        Intp::Token::EQ => EQUALS,
-        Intp::Token::NOT_EQ => EQUALS,
-        Intp::Token::LT => LESSGREATER,
-        Intp::Token::GT => LESSGREATER,
-        Intp::Token::PLUS => SUM,
-        Intp::Token::MINUS => SUM,
-        Intp::Token::SLASH => PRODUCT,
+        Intp::Token::EQ       => EQUALS,
+        Intp::Token::NOT_EQ   => EQUALS,
+        Intp::Token::LT       => LESSGREATER,
+        Intp::Token::GT       => LESSGREATER,
+        Intp::Token::PLUS     => SUM,
+        Intp::Token::MINUS    => SUM,
+        Intp::Token::SLASH    => PRODUCT,
         Intp::Token::ASTERISK => PRODUCT,
-        Intp::Token::LPAREN => CALL,
+        Intp::Token::LPAREN   => CALL,
         Intp::Token::LBRACKET => INDEX,
       }
     end

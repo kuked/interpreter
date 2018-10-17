@@ -1,21 +1,21 @@
 require 'digest/md5'
 
 module Intp
-  INTEGER_OBJ      = "INTEGER"
-  BOOLEAN_OBJ      = "BOOLEAN"
-  NULL_OBJ         = "NULL"
-  RETURN_VALUE_OBJ = "RETURN_VALUE"
-  ERROR_OBJ        = "ERROR"
-  FUNCTION_OBJ     = "FUNCTION"
-  STRING_OBJ       = "STRING"
-  BUILTIN_OBJ      = "BUILTIN"
-  ARRAY_OBJ        = "ARRAY"
-  HASH_OBJ         = "HASH"
+  INTEGER_OBJ      = 'INTEGER'
+  BOOLEAN_OBJ      = 'BOOLEAN'
+  NULL_OBJ         = 'NULL'
+  RETURN_VALUE_OBJ = 'RETURN_VALUE'
+  ERROR_OBJ        = 'ERROR'
+  FUNCTION_OBJ     = 'FUNCTION'
+  STRING_OBJ       = 'STRING'
+  BUILTIN_OBJ      = 'BUILTIN'
+  ARRAY_OBJ        = 'ARRAY'
+  HASH_OBJ         = 'HASH'
 
   class Integer
     attr_accessor :value
     def initialize(value)
-      self.value = value
+      @value = value
     end
 
     def inspect
@@ -27,14 +27,14 @@ module Intp
     end
 
     def hash_key
-      HashKey.new(type, value).value
+      HashKey.new(type, @value).value
     end
   end
 
   class BooleanObject
     attr_accessor :value
     def initialize(value)
-      self.value = value
+      @value = value
     end
 
     def inspect
@@ -46,11 +46,10 @@ module Intp
     end
 
     def hash_key
-      HashKey.new(type, value ? 1 : 0).value
+      HashKey.new(type, @value ? 1 : 0).value
     end
   end
-
-  TRUE = BooleanObject.new(true)
+  TRUE  = BooleanObject.new(true)
   FALSE = BooleanObject.new(false)
 
   class NullObject
@@ -67,11 +66,11 @@ module Intp
   class ReturnValue
     attr_accessor :value
     def initialize(value)
-      self.value = value
+      @value = value
     end
 
     def inspect
-      self.value.inspect
+      @value.inspect
     end
 
     def type
@@ -82,11 +81,11 @@ module Intp
   class Error
     attr_accessor :message
     def initialize(message)
-      self.message = message
+      @message = message
     end
 
     def inspect
-      "ERROR: #{self.message}"
+      "ERROR: #{@message}"
     end
 
     def type
@@ -96,26 +95,26 @@ module Intp
 
   class Environment
     attr_accessor :store, :outer
-    def initialize
-      self.store = {}
+    def initialize(outer=nil)
+      @store = {}
+      @outer = outer
     end
 
     def get(name)
-      obj = store[name]
-      if !obj && self.outer
-        return self.outer.get(name)
+      obj = @store[name]
+      if !obj && @outer
+        return @outer.get(name)
       end
       obj
     end
 
     def set(name, val)
-      store[name] = val
+      @store[name] = val
       val
     end
 
     def self.new_enclosed_environment(outer)
-      env = Environment.new
-      env.outer = outer
+      env = Environment.new(outer)
       env
     end
   end
@@ -123,19 +122,19 @@ module Intp
   class Function
     attr_accessor :parameters, :body, :env
     def initialize(parameters, body, env)
-      self.parameters = parameters
-      self.body = body
-      self.env = env
+      @parameters = parameters
+      @body = body
+      @env = env
     end
 
     def inspect
-      params = parameters.map(&:to_s)
+      params = @parameters.map(&:to_s)
       out = ''
       out << 'fn'
       out << '('
       out << params.join(', ')
       out << ") {\n"
-      out << body.to_s
+      out << @body.to_s
       out << "\n}"
     end
 
@@ -147,7 +146,7 @@ module Intp
   class String
     attr_accessor :value
     def initialize(value)
-      self.value = value
+      @value = value
     end
 
     def type
@@ -155,18 +154,18 @@ module Intp
     end
 
     def inspect
-      value
+      @value
     end
 
     def hash_key
-      HashKey.new(type, Digest::MD5.digest(value)).value
+      HashKey.new(type, Digest::MD5.digest(@value)).value
     end
   end
 
   class Builtin
     attr_accessor :fn
     def initialize(fn)
-      self.fn = fn
+      @fn = fn
     end
 
     def type
@@ -181,7 +180,7 @@ module Intp
   class Array
     attr_accessor :elements
     def initialize(elements)
-      self.elements = elements
+      @elements = elements
     end
 
     def type
@@ -191,7 +190,7 @@ module Intp
     def inspect
       out = ''
       out << '['
-      out << elements.map(&:inspect).join(', ')
+      out << @elements.map(&:inspect).join(', ')
       out << ']'
     end
   end
@@ -199,27 +198,27 @@ module Intp
   class HashKey
     attr_accessor :type, :value
     def initialize(type, value)
-      self.type = type
-      self.value = value
+      @type = type
+      @value = value
     end
 
     def ==(other)
-      self.value == other.value
+      @value == other.value
     end
   end
 
   class HashPair
     attr_accessor :key, :value
     def initialize(key, value)
-      self.key = key
-      self.value = value
+      @key = key
+      @value = value
     end
   end
 
   class Hash
     attr_accessor :pairs
     def initialize(pairs)
-      self.pairs = pairs
+      @pairs = pairs
     end
 
     def type
@@ -228,7 +227,7 @@ module Intp
 
     def inspect
       kv = []
-      pairs.values.each { |p| kv.push("#{p.key.inspect}: #{p.value.inspect}") }
+      @pairs.values.each { |p| kv.push("#{p.key.inspect}: #{p.value.inspect}") }
       out = ''
       out << '{'
       out << kv.join(', ')

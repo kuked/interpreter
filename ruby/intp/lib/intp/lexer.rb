@@ -1,4 +1,3 @@
-
 module Intp
   class Lexer
     attr_accessor :input, :position, :read_position, :ch
