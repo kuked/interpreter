@@ -247,7 +247,7 @@ module Intp
         hashed = key.hash_key
         pairs[hashed] = Intp::HashPair.new(key, value)
       end
-
+      
       Intp::Hash.new(pairs)
     end
 

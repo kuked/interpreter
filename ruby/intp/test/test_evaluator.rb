@@ -275,6 +275,38 @@ EOS
     end
   end
 
+  def test_hash_literals
+    input = <<"EOS"
+    let two = "two";
+    {
+        "one": 10 - 9,
+        "two": 1 + 1,
+        "thr" + "ee": 6 / 2,
+        4: 4,
+        true: 5,
+        false: 6
+    }
+EOS
+    evaluated = do_eval(input)
+    assert_instance_of Intp::Hash, evaluated
+
+    expected = {
+      Intp::String.new("one").hash_key   => 1,
+      Intp::String.new("two").hash_key   => 2,
+      Intp::String.new("three").hash_key => 3,
+      Intp::Integer.new(4).hash_key      => 4,
+      Intp::TRUE.hash_key                => 5,
+      Intp::FALSE.hash_key               => 6,
+    }
+    result = evaluated
+    assert_equal expected.length, result.pairs.length
+
+    expected.each do |k, v|
+      pair = result.pairs[k]
+      _test_integer_object pair.value, v
+    end
+  end
+
   def _test_integer_object(evaluated, expected)
     assert_equal expected, evaluated.value
   end

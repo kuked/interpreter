@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 module Intp
   INTEGER_OBJ      = "INTEGER"
   BOOLEAN_OBJ      = "BOOLEAN"
@@ -8,6 +10,7 @@ module Intp
   STRING_OBJ       = "STRING"
   BUILTIN_OBJ      = "BUILTIN"
   ARRAY_OBJ        = "ARRAY"
+  HASH_OBJ         = "HASH"
 
   class Integer
     attr_accessor :value
@@ -21,6 +24,10 @@ module Intp
 
     def type
       INTEGER_OBJ
+    end
+
+    def hash_key
+      HashKey.new(type, value).value
     end
   end
 
@@ -36,6 +43,10 @@ module Intp
 
     def type
       BOOLEAN_OBJ
+    end
+
+    def hash_key
+      HashKey.new(type, value ? 1 : 0).value
     end
   end
 
@@ -146,6 +157,10 @@ module Intp
     def inspect
       value
     end
+
+    def hash_key
+      HashKey.new(type, Digest::MD5.digest(value)).value
+    end
   end
 
   class Builtin
@@ -178,6 +193,46 @@ module Intp
       out << '['
       out << elements.map(&:inspect).join(', ')
       out << ']'
+    end
+  end
+
+  class HashKey
+    attr_accessor :type, :value
+    def initialize(type, value)
+      self.type = type
+      self.value = value
+    end
+
+    def ==(other)
+      self.value == other.value
+    end
+  end
+
+  class HashPair
+    attr_accessor :key, :value
+    def initialize(key, value)
+      self.key = key
+      self.value = value
+    end
+  end
+
+  class Hash
+    attr_accessor :pairs
+    def initialize(pairs)
+      self.pairs = pairs
+    end
+
+    def type
+      HASH_OBJ
+    end
+
+    def inspect
+      kv = []
+      pairs.values.each { |p| kv.push("#{p.key.inspect}: #{p.value.inspect}") }
+      out = ''
+      out << '{'
+      out << kv.join(', ')
+      out << '}'
     end
   end
 end
