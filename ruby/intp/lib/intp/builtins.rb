@@ -83,6 +83,12 @@ module Intp
             end
           }
         ),
+        'puts' => Intp::Builtin.new(
+          proc { |args|
+            args.each { |arg| puts arg.inspect }
+            Intp::NULL
+          }
+        ),
       }
 
       def fetch(function_name)
