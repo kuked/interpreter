@@ -19,7 +19,7 @@ module Intp
     end
 
     def inspect
-      "#{value}"
+      value.to_s
     end
 
     def type
@@ -38,7 +38,7 @@ module Intp
     end
 
     def inspect
-      "#{value}"
+      value.to_s
     end
 
     def type
@@ -54,7 +54,7 @@ module Intp
 
   class NullObject
     def inspect
-      "null"
+      'null'
     end
 
     def type
@@ -95,16 +95,15 @@ module Intp
 
   class Environment
     attr_accessor :store, :outer
-    def initialize(outer=nil)
+    def initialize(outer = nil)
       @store = {}
       @outer = outer
     end
 
     def get(name)
       obj = @store[name]
-      if !obj && @outer
-        return @outer.get(name)
-      end
+      return @outer.get(name) if !obj && @outer
+
       obj
     end
 
@@ -164,8 +163,8 @@ module Intp
 
   class Builtin
     attr_accessor :fn
-    def initialize(fn)
-      @fn = fn
+    def initialize(fnc)
+      @fn = fnc
     end
 
     def type
@@ -173,7 +172,7 @@ module Intp
     end
 
     def inspect
-      "builtin function"
+      'builtin function'
     end
   end
 

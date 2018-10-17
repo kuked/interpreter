@@ -7,7 +7,8 @@ module Intp
         'len' => Intp::Builtin.new(
           proc { |args|
             if args.length != 1
-              Intp::Evaluator.new_error("wrong number of arguments. got=#{args.length}, want=1")
+              message = "wrong number of arguments. got=#{args.length}, want=1"
+              Intp::Evaluator.new_error message
             else
               case args[0]
               when Intp::Array
@@ -15,7 +16,8 @@ module Intp
               when Intp::String
                 Intp::Integer.new(args[0].value.length)
               else
-                Intp::Evaluator.new_error("argument to `len` not supported, got #{args[0].type}")
+                message = "argument to `len` not supported, got #{args[0].type}"
+                Intp::Evaluator.new_error message
               end
             end
           }
@@ -23,12 +25,14 @@ module Intp
         'first' => Intp::Builtin.new(
           proc { |args|
             if args.length != 1
-              Intp::Evaluator.new_error("wrong number of arguments. got=#{args.length}, want=1")
+              message = "wrong number of arguments. got=#{args.length}, want=1"
+              Intp::Evaluator.new_error message
             elsif args[0].type != Intp::ARRAY_OBJ
-              Intp::Evaluator.new_error("argument to `first` must be ARRAY, got #{args[0].typ}")
+              message = "argument to `first` must be ARRAY, got #{args[0].type}"
+              Intp::Evaluator.new_error message
             else
               arr = args[0]
-              if arr.elements.length > 0
+              if arr.elements.length.positive?
                 arr.elements[0]
               else
                 Intp::NULL
@@ -39,14 +43,16 @@ module Intp
         'last' => Intp::Builtin.new(
           proc { |args|
             if args.length != 1
-              Intp::Evaluator.new_error("wrong number of arguments. got=#{args.length}, want=1")
+              message = "wrong number of arguments. got=#{args.length}, want=1"
+              Intp::Evaluator.new_error message
             elsif args[0].type != Intp::ARRAY_OBJ
-              Intp::Evaluator.new_error("argument to `last` must be ARRAY, got #{args[0].type}")
+              message = "argument to `last` must be ARRAY, got #{args[0].type}"
+              Intp::Evaluator.new_error message
             else
               arr = args[0]
               length = arr.elements.length
-              if length > 0
-                arr.elements[length-1]
+              if length.positive?
+                arr.elements[length - 1]
               else
                 Intp::NULL
               end
@@ -56,14 +62,16 @@ module Intp
         'rest' => Intp::Builtin.new(
           proc { |args|
             if args.length != 1
-              Intp::Evaluator.new_error("wrong number of arguments. got=#{args.length}, want=1")
+              message = "wrong number of arguments. got=#{args.length}, want=1"
+              Intp::Evaluator.new_error message
             elsif args[0].type != Intp::ARRAY_OBJ
-              Intp::Evaluator.new_error("argument to `rest` must be ARRAY, got #{args[0].type}")
+              message = "argument to `rest` must be ARRAY, got #{args[0].type}"
+              Intp::Evaluator.new_error message
             else
               arr = args[0]
               length = arr.elements.length
-              if length > 0
-                Intp::Array.new(arr.elements[1, length-1])
+              if length.positive?
+                Intp::Array.new(arr.elements[1, length - 1])
               else
                 Intp::NULL
               end
@@ -73,13 +81,15 @@ module Intp
         'push' => Intp::Builtin.new(
           proc { |args|
             if args.length != 2
-              Intp::Evaluator.new_error("wrong number of arguments. got=#{args.length}, want=2")
+              message = "wrong number of arguments. got=#{args.length}, want=2"
+              Intp::Evaluator.new_error message
             elsif args[0].type != Intp::ARRAY_OBJ
-              Intp::Evaluator.new_error("argument to `push` must be ARRAY, got #{args[0].type}")
+              message = "argument to `push` must be ARRAY, got #{args[0].type}"
+              Intp::Evaluator.new_error message
             else
               arr = args[0]
               new_elements = arr.elements.dup
-              Intp::Array.new(new_elements.push args[1])
+              Intp::Array.new(new_elements.push(args[1]))
             end
           }
         ),
@@ -88,7 +98,7 @@ module Intp
             args.each { |arg| puts arg.inspect }
             Intp::NULL
           }
-        ),
+        )
       }
 
       def fetch(function_name)

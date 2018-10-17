@@ -1,26 +1,26 @@
-require File.expand_path('../helper', __FILE__)
+require_relative 'helper'
 
 class ParserTest < Minitest::Test
   def test_let_statements
-    input = <<'EOS'
+    input = <<INPUT
     let x = 5;
     let y = 10;
     let foobar = 838383;
-EOS
+INPUT
     l = Intp::Lexer.new(input)
     p = Intp::Parser.new(l)
 
     program = p.parse_program
     check_parse_errors(p)
-    assert program != nil
+    assert !program.nil?
 
     tests = [
       ['x'],
       ['y'],
-      ['foobar'],
+      ['foobar']
     ]
     tests.each_with_index do |test, i|
-      stmt = program.statements[i] 
+      stmt = program.statements[i]
       assert_equal stmt.token_literal, 'let'
       let_stmt = stmt
       assert_equal let_stmt.name.value, test[0]
@@ -29,11 +29,11 @@ EOS
   end
 
   def test_return_statements
-    input = <<'EOS'
+    input = <<INPUT
     return 5;
     return 10;
     return 993322;
-EOS
+INPUT
     l = Intp::Lexer.new(input)
     p = Intp::Parser.new(l)
 
@@ -43,7 +43,7 @@ EOS
 
     program.statements.each do |stmt|
       return_stmt = stmt
-      assert_equal return_stmt.token_literal, "return"
+      assert_equal return_stmt.token_literal, 'return'
     end
   end
 
@@ -65,7 +65,7 @@ EOS
 
   def test_integer_literal_expression
     input = '5;'
-    
+
     l = Intp::Lexer.new(input)
     p = Intp::Parser.new(l)
     program = p.parse_program
@@ -82,7 +82,7 @@ EOS
   def test_parsing_prefix_expressions
     tests = [
       ['!5;', '!', 5],
-      ['-15;', '-', 15],
+      ['-15;', '-', 15]
     ]
 
     tests.each do |test|
@@ -114,7 +114,7 @@ EOS
       infix_test.new('5 > 5',  5, '>', 5),
       infix_test.new('5 < 5',  5, '<', 5),
       infix_test.new('5 == 5', 5, '==', 5),
-      infix_test.new('5 != 5', 5, '!=', 5),
+      infix_test.new('5 != 5', 5, '!=', 5)
     ]
 
     tests.each do |test|
@@ -135,28 +135,28 @@ EOS
 
   def test_operator_precedence_parsing
     tests = [
-      ["-a * b", "((-a) * b)"],
-      ["!-a", "(!(-a))"],
-      ["a + b + c", "((a + b) + c)"],      
-      ["a + b - c", "((a + b) - c)"],
-      ["a * b * c", "((a * b) * c)"],
-      ["a * b / c", "((a * b) / c)"],
-      ["a + b / c", "(a + (b / c))"],
-      ["a + b * c + d / e - f", "(((a + (b * c)) + (d / e)) - f)"],
-      ["3 + 4; -5 * 5", "(3 + 4)((-5) * 5)"],
-      ["5 > 4 == 3 < 4", "((5 > 4) == (3 < 4))"],
-      ["5 < 4 != 3 > 4", "((5 < 4) != (3 > 4))"],
-      ["3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"],
-      ["1 + (2 + 3) + 4", "((1 + (2 + 3)) + 4)"],
-      ["(5 + 5) * 2", "((5 + 5) * 2)"],
-      ["2 / (5 + 5)", "(2 / (5 + 5))"],
-      ["-(5 + 5)", "(-(5 + 5))"],
-      ["!(true == true)", "(!(true == true))"],
-      ["a + add(b * c) + d", "((a + add((b * c))) + d)"],
-      ["add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))", "add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))"],
-      ["add(a + b + c * d / f + g)", "add((((a + b) + ((c * d) / f)) + g))"],
-      ["a * [1, 2, 3, 4][b * c] * d", "((a * ([1, 2, 3, 4][(b * c)])) * d)"],
-      ["add(a * b[2], b[1], 2 * [1, 2][1])", "add((a * (b[2])), (b[1]), (2 * ([1, 2][1])))"],
+      ['-a * b', '((-a) * b)'],
+      ['!-a', '(!(-a))'],
+      ['a + b + c', '((a + b) + c)'],
+      ['a + b - c', '((a + b) - c)'],
+      ['a * b * c', '((a * b) * c)'],
+      ['a * b / c', '((a * b) / c)'],
+      ['a + b / c', '(a + (b / c))'],
+      ['a + b * c + d / e - f', '(((a + (b * c)) + (d / e)) - f)'],
+      ['3 + 4; -5 * 5', '(3 + 4)((-5) * 5)'],
+      ['5 > 4 == 3 < 4', '((5 > 4) == (3 < 4))'],
+      ['5 < 4 != 3 > 4', '((5 < 4) != (3 > 4))'],
+      ['3 + 4 * 5 == 3 * 1 + 4 * 5', '((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))'],
+      ['1 + (2 + 3) + 4', '((1 + (2 + 3)) + 4)'],
+      ['(5 + 5) * 2', '((5 + 5) * 2)'],
+      ['2 / (5 + 5)', '(2 / (5 + 5))'],
+      ['-(5 + 5)', '(-(5 + 5))'],
+      ['!(true == true)', '(!(true == true))'],
+      ['a + add(b * c) + d', '((a + add((b * c))) + d)'],
+      ['add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))', 'add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))'],
+      ['add(a + b + c * d / f + g)', 'add((((a + b) + ((c * d) / f)) + g))'],
+      ['a * [1, 2, 3, 4][b * c] * d', '((a * ([1, 2, 3, 4][(b * c)])) * d)'],
+      ['add(a * b[2], b[1], 2 * [1, 2][1])', 'add((a * (b[2])), (b[1]), (2 * ([1, 2][1])))']
     ]
 
     tests.each do |test|
@@ -171,7 +171,7 @@ EOS
 
   def test_boolean_expression
     input = 'false'
-    
+
     l = Intp::Lexer.new(input)
     p = Intp::Parser.new(l)
     program = p.parse_program
@@ -185,7 +185,7 @@ EOS
     assert_equal literal.token_literal, 'false'
 
     input = 'true'
-    
+
     l = Intp::Lexer.new(input)
     p = Intp::Parser.new(l)
     program = p.parse_program
@@ -196,7 +196,7 @@ EOS
 
     literal = stmt.expression
     assert_equal literal.value, true
-    assert_equal literal.token_literal, 'true'    
+    assert_equal literal.token_literal, 'true'
   end
 
   def test_if_expression
@@ -206,7 +206,7 @@ EOS
     program = p.parse_program
     check_parse_errors(p)
     assert_equal 1, program.statements.length
-    
+
     stmt = program.statements[0]
     exp = stmt.expression
     assert_equal 1, exp.consequence.statements.length
@@ -223,11 +223,11 @@ EOS
     assert_equal 1, program.statements.length
     stmt = program.statements[0]
     function = stmt.expression
-    
+
     assert_equal 2, function.parameters.length
     assert_equal 'x', function.parameters[0].token_literal
     assert_equal 'y', function.parameters[1].token_literal
-    
+
     assert_equal 1, function.body.statements.length
     body_statement = function.body.statements[0]
 
@@ -245,7 +245,7 @@ EOS
 
     stmt = program.statements[0]
     literal = stmt.expression
-    assert_equal "hello world!", literal.value
+    assert_equal 'hello world!', literal.value
   end
 
   def test_array_literal
@@ -297,7 +297,7 @@ EOS
     hash = stmt.expression
     assert_equal 3, hash.pairs.length
 
-    expected = { "one" => 1, "two" => 2, "three" => 3 }
+    expected = { 'one' => 1, 'two' => 2, 'three' => 3 }
     hash.pairs.each do |k, v|
       assert_instance_of Intp::StringLiteral, k
       assert_equal expected[k.to_s], v.value
@@ -332,14 +332,13 @@ EOS
     assert_equal 3, hash.pairs.length
 
     # TODO
-    tests = {
-    }
   end
 
   def check_parse_errors(parser)
     errors = parser.errors
     return if errors.length.zero?
+
     warn "parser has #{errors.length} errors"
-    errors.each {|e| warn "parser error: #{e}" }
+    errors.each { |e| warn "parser error: #{e}" }
   end
 end

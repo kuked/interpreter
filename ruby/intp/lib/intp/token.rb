@@ -54,7 +54,7 @@ module Intp
         'false'  => FALSE,
         'if'     => IF,
         'else'   => ELSE,
-        'return' => RETURN,
+        'return' => RETURN
       }
       @@keywords.default = IDENT
 

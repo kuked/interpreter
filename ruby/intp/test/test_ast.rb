@@ -5,7 +5,7 @@ class AstTest < Minitest::Test
     let_stmt = Intp::LetStatement.new
     let_stmt.token = Intp::Token.new(Intp::Token::LET, 'let')
     let_stmt.name = Intp::Identifier.new(
-      Intp::Token.new(Intp::Token::IDENT, 'myVar'), 
+      Intp::Token.new(Intp::Token::IDENT, 'myVar'),
       'myVar'
     )
     let_stmt.value = Intp::Identifier.new(

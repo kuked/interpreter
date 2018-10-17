@@ -1,8 +1,8 @@
-require File.expand_path('../helper', __FILE__)
+require_relative 'helper'
 
 class LexerTest < Minitest::Test
   def test_next_token
-    input = <<'EOS'
+    input = <<INPUT
     let five = 5;
     let ten = 10;
 
@@ -26,7 +26,7 @@ class LexerTest < Minitest::Test
     "foo bar"
     [1, 2];
     {"foo": "bar"}
-EOS
+INPUT
 
     tests = [
       [Intp::Token::LET, 'let'],
@@ -115,7 +115,7 @@ EOS
       [Intp::Token::COLON, ':'],
       [Intp::Token::STRING, 'bar'],
       [Intp::Token::RBRACE, '}'],
-      [Intp::Token::EOF, ''],
+      [Intp::Token::EOF, '']
     ]
 
     l = Intp::Lexer.new(input)

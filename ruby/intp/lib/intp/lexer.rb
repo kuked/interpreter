@@ -83,11 +83,8 @@ module Intp
     private
 
     def read_char
-      if @read_position >= @input.length
-        @ch = nil
-      else
-        @ch = @input[@read_position]
-      end
+      @ch = nil
+      @ch = @input[@read_position] if @read_position < @input.length
       @position = @read_position
       @read_position += 1
     end
@@ -116,7 +113,7 @@ module Intp
       position = @position + 1
       loop do
         read_char
-        break if (@ch == '"' || @ch == '')
+        break if @ch == '"' || @ch == ''
       end
       @input[position, (@position - position)]
     end

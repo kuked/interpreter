@@ -1,9 +1,9 @@
 module Intp
   Program = Struct.new(:statements) do
     def token_literal
-      statements.length > 0 ? statements[0].token_literal : ''
+      statements.length.positive? ? statements[0].token_literal : ''
     end
-    
+
     def to_s
       out = ''
       statements.each { |stmt| out << stmt.to_s }
@@ -34,7 +34,7 @@ module Intp
       value
     end
   end
-  
+
   class ReturnStatement
     attr_accessor :token, :return_value
     def token_literal
@@ -43,7 +43,7 @@ module Intp
 
     def to_s
       out = ''
-      out = token_literal + ' '
+      out << token_literal + ' '
       out << @return_value.to_s if @return_value
       out << ';'
     end
@@ -130,7 +130,7 @@ module Intp
         out << 'else '
         out << @alternative.to_s
       end
-      
+
       out
     end
   end
@@ -244,7 +244,7 @@ module Intp
 
     def to_s
       kv = []
-      @pairs.each { |k, v| kv.push("#{k.to_s}:#{v.to_s}") }
+      @pairs.each { |k, v| kv.push("#{k}:#{v}") }
       out = ''
       out << '{'
       out << kv.join(', ')
