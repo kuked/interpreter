@@ -222,6 +222,8 @@ module Intp
       case
       when left.type == Intp::ARRAY_OBJ && index.type == Intp::INTEGER_OBJ
         eval_array_index_expression(left, index)
+      when left.type == Intp::HASH_OBJ
+        eval_hash_literal_expression(left, index)
       else
         new_error("index operator not supported: #{left.type}")
       end
@@ -249,6 +251,17 @@ module Intp
       end
 
       Intp::Hash.new(pairs)
+    end
+
+    def self.eval_hash_literal_expression(hash, index)
+      hash_object = hash
+      unless index.respond_to?(:hash_key)
+        return new_error("unusable as hash key: #{index.type}")
+      end
+      pair = hash_object.pairs[index.hash_key]
+      return Intp::NULL unless pair
+
+      pair.value
     end
 
     def self.native_bool_to_boolean_object(input)

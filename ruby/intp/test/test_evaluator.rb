@@ -141,6 +141,7 @@ EOS
       [input, "unknown operator: BOOLEAN + BOOLEAN"],
       ["foobar", "identifier not found: foobar"],
       ['"Hello" - "World"', "unknown operator: STRING - STRING"],
+      ['{"name": "Monkey"}[fn(x) { x }];', "unusable as hash key: FUNCTION"],
     ]
     tests.each do |test|
       evaluated = do_eval(test[0])
@@ -304,6 +305,27 @@ EOS
     expected.each do |k, v|
       pair = result.pairs[k]
       _test_integer_object pair.value, v
+    end
+  end
+
+  def test_hash_index_expressions
+    tests = [
+      ['{"foo": 5}["foo"]', 5],
+      ['{"foo": 5}["bar"]', nil],
+      ['let key = "foo"; {"foo": 5}[key]', 5],
+      ['{}["foo"]', nil],
+      ['{5: 5}[5]', 5],
+      ['{false: 5}[false]', 5],
+    ]
+
+    tests.each do |test|
+      evaluated = do_eval(test[0])
+      case test[1]
+      when Integer
+        _test_integer_object evaluated, test[1]
+      else
+        _test_null_object evaluated
+      end
     end
   end
 
