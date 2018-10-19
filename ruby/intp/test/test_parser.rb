@@ -2,48 +2,46 @@ require_relative 'helper'
 
 class ParserTest < Minitest::Test
   def test_let_statements
-    input = <<INPUT
-    let x = 5;
-    let y = 10;
-    let foobar = 838383;
-INPUT
-    l = Intp::Lexer.new(input)
-    p = Intp::Parser.new(l)
-
-    program = p.parse_program
-    check_parse_errors(p)
-    assert !program.nil?
-
     tests = [
-      ['x'],
-      ['y'],
-      ['foobar']
+      ['let x = 5;', 'x', 5],
+      ['let y = true;', 'y', true],
+      ['let foobar = y;', 'foobar', 'y']
     ]
-    tests.each_with_index do |test, i|
-      stmt = program.statements[i]
-      assert_equal stmt.token_literal, 'let'
-      let_stmt = stmt
-      assert_equal let_stmt.name.value, test[0]
-      assert_equal let_stmt.name.token_literal, test[0]
+
+    tests.each do |test|
+      l = Intp::Lexer.new(test[0])
+      p = Intp::Parser.new(l)
+      program = p.parse_program
+      check_parse_errors(p)
+
+      assert_equal program.statements.length, 1
+      stmt = program.statements[0]
+      # TODO
+      # _test_let_statement stmt, test[1]
+
+      assert_instance_of Intp::LetStatement, stmt
+      val = stmt.value
+      _test_literal_expression val, test[2]
     end
   end
 
   def test_return_statements
-    input = <<INPUT
-    return 5;
-    return 10;
-    return 993322;
-INPUT
-    l = Intp::Lexer.new(input)
-    p = Intp::Parser.new(l)
+    tests = [
+      ['return 5;', 5],
+      ['return foobar;', 'foobar']
+    ]
 
-    program = p.parse_program
-    check_parse_errors(p)
-    assert_equal 3, program.statements.length
+    tests.each do |test|
+      l = Intp::Lexer.new(test[0])
+      p = Intp::Parser.new(l)
+      program = p.parse_program
+      check_parse_errors(p)
 
-    program.statements.each do |stmt|
-      return_stmt = stmt
-      assert_equal return_stmt.token_literal, 'return'
+      assert_equal program.statements.length, 1
+      stmt = program.statements[0]
+      assert_instance_of Intp::ReturnStatement, stmt
+
+      _test_literal_expression stmt.return_value, test[1]
     end
   end
 
@@ -57,10 +55,8 @@ INPUT
     assert_equal 1, program.statements.length
 
     stmt = program.statements[0]
-
-    ident = stmt.expression
-    assert_equal ident.value, 'foobar'
-    assert_equal ident.token_literal, 'foobar'
+    assert_instance_of Intp::ExpressionStatement, stmt
+    _test_literal_expression stmt.expression, 'foobar'
   end
 
   def test_integer_literal_expression
@@ -73,16 +69,17 @@ INPUT
     assert_equal 1, program.statements.length
 
     stmt = program.statements[0]
+    assert_instance_of Intp::ExpressionStatement, stmt
 
-    literal = stmt.expression
-    assert_equal literal.value, 5
-    assert_equal literal.token_literal, '5'
+    _test_literal_expression stmt.expression, 5
   end
 
   def test_parsing_prefix_expressions
     tests = [
       ['!5;', '!', 5],
-      ['-15;', '-', 15]
+      ['-15;', '-', 15],
+      ['!true', '!', true],
+      ['!false', '!', false]
     ]
 
     tests.each do |test|
@@ -93,12 +90,14 @@ INPUT
 
       assert_equal 1, program.statements.length
       stmt = program.statements[0]
+      assert_instance_of Intp::ExpressionStatement, stmt
 
-      expression = stmt.expression
-      assert_equal expression.operator, test[1]
-      # TODO
-      assert_equal expression.right.value, test[2]
-      assert_equal expression.right.token_literal, test[2].to_s
+      assert_instance_of Intp::PrefixExpression, stmt.expression
+
+      exp = stmt.expression
+      assert_equal exp.operator, test[1]
+
+      _test_literal_expression exp.right, test[2]
     end
   end
 
@@ -125,7 +124,9 @@ INPUT
 
       assert_equal 1, program.statements.length
       stmt = program.statements[0]
+      assert_instance_of Intp::ExpressionStatement, stmt
 
+      # TODO
       expression = stmt.expression
       assert_equal expression.left.value, test[1]
       assert_equal expression.operator, test[2]
@@ -200,7 +201,7 @@ INPUT
   end
 
   def test_if_expression
-    input = 'if (x < y) { x }'
+    input = 'if (x < y) { x } else { y }'
     l = Intp::Lexer.new(input)
     p = Intp::Parser.new(l)
     program = p.parse_program
@@ -208,9 +209,21 @@ INPUT
     assert_equal 1, program.statements.length
 
     stmt = program.statements[0]
+    assert_instance_of Intp::ExpressionStatement, stmt
+
     exp = stmt.expression
-    assert_equal 1, exp.consequence.statements.length
-    # TODO
+    # _test_infix_expression exp.condition, 'x', '<', 'y'
+    assert_equal exp.consequence.statements.length, 1
+
+    consequence = exp.consequence.statements[0]
+    assert_instance_of Intp::ExpressionStatement, consequence
+    _test_identifier consequence.expression, 'x'
+
+    assert_equal exp.alternative.statements.length, 1
+
+    alternative = exp.alternative.statements[0]
+    assert_instance_of Intp::ExpressionStatement, alternative
+    _test_identifier alternative.expression, 'y'
   end
 
   def test_function_literal_parsing
@@ -222,21 +235,26 @@ INPUT
 
     assert_equal 1, program.statements.length
     stmt = program.statements[0]
+    assert_instance_of Intp::ExpressionStatement, stmt
+
     function = stmt.expression
+    assert_instance_of Intp::FunctionLiteral, function
 
     assert_equal 2, function.parameters.length
-    assert_equal 'x', function.parameters[0].token_literal
-    assert_equal 'y', function.parameters[1].token_literal
+    _test_literal_expression function.parameters[0], 'x'
+    _test_literal_expression function.parameters[1], 'y'
 
     assert_equal 1, function.body.statements.length
-    body_statement = function.body.statements[0]
+    body_stmt = function.body.statements[0]
+    assert_instance_of Intp::ExpressionStatement, body_stmt
 
-    assert_equal body_statement.expression.left.value, 'x'
-    assert_equal body_statement.expression.operator, '+'
-    assert_equal body_statement.expression. right.value, 'y'
+    # _test_infix_expression body_stmt.expression, 'x', '+', 'y'
+    assert_equal body_stmt.expression.left.value, 'x'
+    assert_equal body_stmt.expression.operator, '+'
+    assert_equal body_stmt.expression.right.value, 'y'
   end
 
-  def test_string_literal
+  def test_string_literal_expression
     input = '"hello world!"'
     l = Intp::Lexer.new(input)
     p = Intp::Parser.new(l)
@@ -245,10 +263,11 @@ INPUT
 
     stmt = program.statements[0]
     literal = stmt.expression
+    assert_instance_of Intp::StringLiteral, literal
     assert_equal 'hello world!', literal.value
   end
 
-  def test_array_literal
+  def test_parsing_array_literals
     input = '[1, 2 * 2, 3 + 3]'
     l = Intp::Lexer.new(input)
     p = Intp::Parser.new(l)
@@ -276,7 +295,7 @@ INPUT
     assert_instance_of Intp::IndexExpression, stmt.expression
 
     index_exp = stmt.expression
-    assert_equal 'myArray', index_exp.left.value
+    _test_identifier index_exp.left, 'myArray'
 
     # TODO
     assert_equal 1, index_exp.index.left.value
