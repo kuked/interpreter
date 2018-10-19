@@ -1,0 +1,14 @@
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/MutableConstant:
+  Enabled: false
+
+Security/Eval:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false

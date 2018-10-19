@@ -328,16 +328,4 @@ INPUT
       end
     end
   end
-
-  def _test_integer_object(evaluated, expected)
-    assert_equal expected, evaluated.value
-  end
-
-  def _test_boolean_object(evaluated, expected)
-    assert_equal expected, evaluated.value
-  end
-
-  def _test_null_object(evaluated)
-    assert_equal evaluated, Intp::NULL
-  end
 end
