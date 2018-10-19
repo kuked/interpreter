@@ -19,3 +19,21 @@ end
 def _test_null_object(evaluated)
   assert_equal evaluated, Intp::NULL
 end
+
+def _test_identifier(exp, value)
+  assert_instance_of Intp::Identifier, exp
+  ident = exp
+  assert_equal ident.value, value
+  assert_equal ident.token_literal, value
+end
+
+def _test_literal_expression(exp, expected)
+  case expected
+  when Integer
+    _test_integer_object exp, expected
+  when String
+    _test_identifier exp, expected
+  when TrueClass || FalseClass
+    _test_boolean_object exp, expected
+  end
+end
