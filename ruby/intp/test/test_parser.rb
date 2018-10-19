@@ -16,12 +16,7 @@ class ParserTest < Minitest::Test
 
       assert_equal program.statements.length, 1
       stmt = program.statements[0]
-      # TODO
-      # _test_let_statement stmt, test[1]
-
-      assert_instance_of Intp::LetStatement, stmt
-      val = stmt.value
-      _test_literal_expression val, test[2]
+      _test_let_statement stmt, test[1]
     end
   end
 
@@ -113,11 +108,14 @@ class ParserTest < Minitest::Test
       infix_test.new('5 > 5',  5, '>', 5),
       infix_test.new('5 < 5',  5, '<', 5),
       infix_test.new('5 == 5', 5, '==', 5),
-      infix_test.new('5 != 5', 5, '!=', 5)
+      infix_test.new('5 != 5', 5, '!=', 5),
+      infix_test.new('true == true', true, '==', true),
+      infix_test.new('true != false', true, '!=', false),
+      infix_test.new('false == false', false, '==', false)
     ]
 
     tests.each do |test|
-      l = Intp::Lexer.new(test[0])
+      l = Intp::Lexer.new(test.input)
       p = Intp::Parser.new(l)
       program = p.parse_program
       check_parse_errors(p)
@@ -126,11 +124,7 @@ class ParserTest < Minitest::Test
       stmt = program.statements[0]
       assert_instance_of Intp::ExpressionStatement, stmt
 
-      # TODO
-      expression = stmt.expression
-      assert_equal expression.left.value, test[1]
-      assert_equal expression.operator, test[2]
-      assert_equal expression.right.value, test[3]
+      _test_infix_expression stmt.expression, test.left_value, test.operator, test.right_value
     end
   end
 
@@ -170,34 +164,24 @@ class ParserTest < Minitest::Test
     end
   end
 
-  def test_boolean_expression
-    input = 'false'
+  def test_boolean_literal_expression
+    tests = [
+      ['true', true],
+      ['false', false]
+    ]
 
-    l = Intp::Lexer.new(input)
-    p = Intp::Parser.new(l)
-    program = p.parse_program
-    check_parse_errors(p)
-    assert_equal 1, program.statements.length
+    tests.each do |test|
+      input, expected = test
+      l = Intp::Lexer.new(input)
+      p = Intp::Parser.new(l)
+      program = p.parse_program
+      check_parse_errors(p)
 
-    stmt = program.statements[0]
-
-    literal = stmt.expression
-    assert_equal literal.value, false
-    assert_equal literal.token_literal, 'false'
-
-    input = 'true'
-
-    l = Intp::Lexer.new(input)
-    p = Intp::Parser.new(l)
-    program = p.parse_program
-    check_parse_errors(p)
-    assert_equal 1, program.statements.length
-
-    stmt = program.statements[0]
-
-    literal = stmt.expression
-    assert_equal literal.value, true
-    assert_equal literal.token_literal, 'true'
+      assert_equal 1, program.statements.length
+      stmt = program.statements[0]
+      assert_instance_of Intp::ExpressionStatement, stmt
+      _test_literal_expression stmt.expression, expected
+    end
   end
 
   def test_if_expression
@@ -212,7 +196,7 @@ class ParserTest < Minitest::Test
     assert_instance_of Intp::ExpressionStatement, stmt
 
     exp = stmt.expression
-    # _test_infix_expression exp.condition, 'x', '<', 'y'
+    _test_infix_expression exp.condition, 'x', '<', 'y'
     assert_equal exp.consequence.statements.length, 1
 
     consequence = exp.consequence.statements[0]
@@ -248,10 +232,7 @@ class ParserTest < Minitest::Test
     body_stmt = function.body.statements[0]
     assert_instance_of Intp::ExpressionStatement, body_stmt
 
-    # _test_infix_expression body_stmt.expression, 'x', '+', 'y'
-    assert_equal body_stmt.expression.left.value, 'x'
-    assert_equal body_stmt.expression.operator, '+'
-    assert_equal body_stmt.expression.right.value, 'y'
+    _test_infix_expression body_stmt.expression, 'x', '+', 'y'
   end
 
   def test_string_literal_expression
@@ -280,8 +261,9 @@ class ParserTest < Minitest::Test
     array = stmt.expression
     assert_equal 3, array.elements.length
 
-    assert_equal 1, array.elements[0].value
-    # TODO
+    _test_integer_literal array.elements[0], 1
+    _test_infix_expression array.elements[1], 2, '*', 2
+    _test_infix_expression array.elements[2], 3, '+', 3
   end
 
   def test_parsing_index_expression
@@ -296,11 +278,7 @@ class ParserTest < Minitest::Test
 
     index_exp = stmt.expression
     _test_identifier index_exp.left, 'myArray'
-
-    # TODO
-    assert_equal 1, index_exp.index.left.value
-    assert_equal '+', index_exp.index.operator
-    assert_equal 1, index_exp.index.right.value
+    _test_infix_expression index_exp.index, 1, '+', 1
   end
 
   def test_parsing_hash_literal_string_keys
@@ -319,7 +297,7 @@ class ParserTest < Minitest::Test
     expected = { 'one' => 1, 'two' => 2, 'three' => 3 }
     hash.pairs.each do |k, v|
       assert_instance_of Intp::StringLiteral, k
-      assert_equal expected[k.to_s], v.value
+      _test_integer_literal v, expected[k.to_s]
     end
   end
 
@@ -350,7 +328,18 @@ class ParserTest < Minitest::Test
     hash = stmt.expression
     assert_equal 3, hash.pairs.length
 
-    # TODO
+    tests = {
+      'one'   => proc { |arg| _test_infix_expression(arg, 0,  '+', 1) },
+      'two'   => proc { |arg| _test_infix_expression(arg, 10, '-', 8) },
+      'three' => proc { |arg| _test_infix_expression(arg, 15, '/', 5) }
+    }
+
+    hash.pairs.each do |pair|
+      literal, value = pair
+      assert_instance_of Intp::StringLiteral, literal
+      test_func = tests[literal.to_s]
+      test_func.call(value)
+    end
   end
 
   def check_parse_errors(parser)
