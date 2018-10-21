@@ -145,11 +145,7 @@ INPUT
     ]
     tests.each do |test|
       evaluated = do_eval(test[0])
-      unless evaluated.instance_of?(Intp::Error)
-        print "XXX"
-        next
-      end
-
+      assert_instance_of Intp::Error, evaluated
       assert_equal test[1], evaluated.message
     end
   end
@@ -170,12 +166,12 @@ INPUT
   def test_function_object
     input = 'fn(x) { x + 2; };'
     evaluated = do_eval(input)
-    assert_instance_of(Intp::Function, evaluated)
+    assert_instance_of Intp::Function, evaluated
 
-    # XXX
     assert_equal 1, evaluated.parameters.length
     assert_equal 'x', evaluated.parameters[0].to_s
-    assert_equal '(x + 2)', evaluated.body.to_s
+    expected_body = '(x + 2)'
+    assert_equal expected_body, evaluated.body.to_s
   end
 
   def test_function_application
