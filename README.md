@@ -1,4 +1,4 @@
-### interpreter/ruby/intp
+### ruby/intp
                 __,__
        .--.  .-"     "-.  .--.
       / .. \/  .-. .-.  \/ .. \
