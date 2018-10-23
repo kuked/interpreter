@@ -16,14 +16,14 @@ function testNextToken()
    
    local tests = {
       _record.new(token.ASSIGN, "="),
-      -- _record.new(token.PLUS, '+'),
-      -- _record.new(token.LPAREN, '('),
-      -- _record.new(token.RPAREN, ')'),
-      -- _record.new(token.LBRACE, '{'),
-      -- _record.new(token.RBRACE, '}'),
-      -- _record.new(token.COMMA, ','),
-      -- _record.new(token.SEMICOLON, ';'),
-      -- _record.new(token.EOF, '')
+      _record.new(token.PLUS, '+'),
+      _record.new(token.LPAREN, '('),
+      _record.new(token.RPAREN, ')'),
+      _record.new(token.LBRACE, '{'),
+      _record.new(token.RBRACE, '}'),
+      _record.new(token.COMMA, ','),
+      _record.new(token.SEMICOLON, ';'),
+      _record.new(token.EOF, '')
    }
    
    local l = lexer.new(input)
