@@ -21,4 +21,10 @@ Token.RBRACE = "}"
 Token.FUNCTION = "FUNCTION"
 Token.LET      = "LET"
 
+local keywords = { fn = Token.FUNCTION, let = Token.LET }
+Token.lookupIdent = function(ident)
+   v = keywords[ident]
+   return v and v or Token.IDENT
+end
+
 return Token
