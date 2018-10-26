@@ -7,8 +7,15 @@ Token.EOF     = "EOF"
 Token.IDENT = "IDENT"
 Token.INT   = "INT"
 
-Token.ASSIGN = "="
-Token.PLUS   = "+"
+Token.ASSIGN   = "="
+Token.PLUS     = "+"
+Token.MINUS    = "-"
+Token.BANG     = "!"
+Token.ASTERISK = "*"
+Token.SLASH    = "/"
+
+Token.LT = "<"
+Token.GT = ">"
 
 Token.COMMA     = ","
 Token.SEMICOLON = ";"
