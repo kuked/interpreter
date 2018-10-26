@@ -28,6 +28,9 @@ if (5 < 10) {
 } else {
     return false;
 }
+
+10 == 10;
+10 != 9;
 ]]
    
    local tests = {
@@ -96,6 +99,14 @@ if (5 < 10) {
       _record.new(token.FALSE, "false"),
       _record.new(token.SEMICOLON, ";"),
       _record.new(token.RBRACE, "}"),
+      _record.new(token.INT, "10"),
+      _record.new(token.EQ, "=="),
+      _record.new(token.INT, "10"),
+      _record.new(token.SEMICOLON, ";"),
+      _record.new(token.INT, "10"),
+      _record.new(token.NOT_EQ, "!="),
+      _record.new(token.INT, "9"),
+      _record.new(token.SEMICOLON, ";"),
       _record.new(token.EOF, '')
    }
    

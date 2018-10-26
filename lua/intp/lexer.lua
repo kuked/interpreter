@@ -35,6 +35,14 @@ Lexer.new = function(input)
       return (string.match(ch, "%d") ~= nil)
    end
 
+   local peekChar = function()
+      if l.readPosition >= string.len(l.input) then
+         return nil
+      else
+         return string.sub(l.input, l.readPosition, l.readPosition)
+      end
+   end
+
    local readIdentifier = function()
       local position = l.position
       while isLetter(l.ch) do
@@ -60,14 +68,26 @@ Lexer.new = function(input)
    l.nextToken = function()
       skipWhitespace()
       local tok = newToken(token.EOF, "")
-      if     l.ch == "=" then tok = newToken(token.ASSIGN, l.ch)
+      if l.ch == "=" then
+         if peekChar() == "=" then
+            readChar()
+            tok = newToken(token.EQ, "==")
+         else
+            tok = newToken(token.ASSIGN, l.ch)
+         end
+      elseif l.ch == "!" then
+         if peekChar() == "=" then
+            readChar()
+            tok = newToken(token.NOT_EQ, "!=")
+         else
+            tok = newToken(token.BANG, l.ch)
+         end
       elseif l.ch == ";" then tok = newToken(token.SEMICOLON, l.ch)
       elseif l.ch == "(" then tok = newToken(token.LPAREN, l.ch)
       elseif l.ch == ")" then tok = newToken(token.RPAREN, l.ch)
       elseif l.ch == "," then tok = newToken(token.COMMA, l.ch)
       elseif l.ch == "+" then tok = newToken(token.PLUS, l.ch)
       elseif l.ch == "-" then tok = newToken(token.MINUS, l.ch)
-      elseif l.ch == "!" then tok = newToken(token.BANG, l.ch)
       elseif l.ch == "/" then tok = newToken(token.SLASH, l.ch)
       elseif l.ch == "*" then tok = newToken(token.ASTERISK, l.ch)
       elseif l.ch == "<" then tok = newToken(token.LT, l.ch)
