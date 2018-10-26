@@ -20,6 +20,14 @@ let add = fn(x, y) {
   x + y;
 };
 let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
+
+if (5 < 10) {
+    return true;
+} else {
+    return false;
+}
 ]]
    
    local tests = {
@@ -59,6 +67,35 @@ let result = add(five, ten);
       _record.new(token.IDENT, "ten"),
       _record.new(token.RPAREN, ")"),
       _record.new(token.SEMICOLON, ";"),
+      _record.new(token.BANG, "!"),
+      _record.new(token.MINUS, "-"),
+      _record.new(token.SLASH, "/"),
+      _record.new(token.ASTERISK, "*"),
+      _record.new(token.INT, "5"),
+      _record.new(token.SEMICOLON, ";"),
+      _record.new(token.INT, "5"),
+      _record.new(token.LT, "<"),
+      _record.new(token.INT, "10"),
+      _record.new(token.GT, ">"),
+      _record.new(token.INT, "5"),
+      _record.new(token.SEMICOLON, ";"),
+      _record.new(token.IF, "if"),
+      _record.new(token.LPAREN, "("),
+      _record.new(token.INT, "5"),
+      _record.new(token.LT, "<"),
+      _record.new(token.INT, "10"),
+      _record.new(token.RPAREN, ")"),
+      _record.new(token.LBRACE, "{"),
+      _record.new(token.RETURN, "return"),
+      _record.new(token.TRUE, "true"),
+      _record.new(token.SEMICOLON, ";"),
+      _record.new(token.RBRACE, "}"),
+      _record.new(token.ELSE, "else"),
+      _record.new(token.LBRACE, "{"),
+      _record.new(token.RETURN, "return"),
+      _record.new(token.FALSE, "false"),
+      _record.new(token.SEMICOLON, ";"),
+      _record.new(token.RBRACE, "}"),
       _record.new(token.EOF, '')
    }
    
