@@ -17,6 +17,9 @@ Token.SLASH    = "/"
 Token.LT = "<"
 Token.GT = ">"
 
+Token.EQ     = "=="
+Token.NOT_EQ = "!="
+
 Token.COMMA     = ","
 Token.SEMICOLON = ";"
 
