@@ -1,40 +1,40 @@
 -- token.lua
 local Token = {}
 
-Token.ILLEGAL = "ILLEGAL"
-Token.EOF     = "EOF"
+Token.ILLEGAL = 'ILLEGAL'
+Token.EOF     = 'EOF'
 
-Token.IDENT = "IDENT"
-Token.INT   = "INT"
+Token.IDENT = 'IDENT'
+Token.INT   = 'INT'
 
-Token.ASSIGN   = "="
-Token.PLUS     = "+"
-Token.MINUS    = "-"
-Token.BANG     = "!"
-Token.ASTERISK = "*"
-Token.SLASH    = "/"
+Token.ASSIGN   = '='
+Token.PLUS     = '+'
+Token.MINUS    = '-'
+Token.BANG     = '!'
+Token.ASTERISK = '*'
+Token.SLASH    = '/'
 
-Token.LT = "<"
-Token.GT = ">"
+Token.LT = '<'
+Token.GT = '>'
 
-Token.EQ     = "=="
-Token.NOT_EQ = "!="
+Token.EQ     = '=='
+Token.NOT_EQ = '!='
 
-Token.COMMA     = ","
-Token.SEMICOLON = ";"
+Token.COMMA     = ','
+Token.SEMICOLON = ';'
 
-Token.LPAREN = "("
-Token.RPAREN = ")"
-Token.LBRACE = "{"
-Token.RBRACE = "}"
+Token.LPAREN = '('
+Token.RPAREN = ')'
+Token.LBRACE = '{'
+Token.RBRACE = '}'
 
-Token.FUNCTION = "FUNCTION"
-Token.LET      = "LET"
-Token.TRUE     = "TRUE"
-Token.FALSE    = "FALSE"
-Token.IF       = "IF"
-Token.ELSE     = "ELSE"
-Token.RETURN   = "RETURN"
+Token.FUNCTION = 'FUNCTION'
+Token.LET      = 'LET'
+Token.TRUE     = 'TRUE'
+Token.FALSE    = 'FALSE'
+Token.IF       = 'IF'
+Token.ELSE     = 'ELSE'
+Token.RETURN   = 'RETURN'
 
 local keywords = {
    fn      = Token.FUNCTION,
@@ -48,8 +48,8 @@ local keywords = {
 
 Token.lookupIdent = function(ident)
    local key = ident
-   if string.match(key, "true") or string.match(key, "false") or string.match(key, "if") or string.match(key, "else") or string.match(key, "return") then
-      key = ident.."_"
+   if string.match(key, 'true') or string.match(key, 'false') or string.match(key, 'if') or string.match(key, 'else') or string.match(key, 'return') then
+      key = ident..'_'
    end
    v = keywords[key]
    return v and v or Token.IDENT
