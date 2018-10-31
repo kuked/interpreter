@@ -1,10 +1,10 @@
 -- repl.lua
-local lexer = require("lexer")
-local token = require("token")
+local lexer = require('lexer')
+local token = require('token')
 
 local Repl = {}
 
-Repl.PROMPT = ">> "
+Repl.PROMPT = '>> '
 
 Repl.start = function()
    io.write(Repl.PROMPT)

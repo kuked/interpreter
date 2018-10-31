@@ -1,5 +1,5 @@
 -- lexer.lua
-local token = require("token")
+local token = require('token')
 
 local Lexer = {}
 
@@ -8,11 +8,11 @@ Lexer.new = function(input)
    l.input = input
    l.position = 1
    l.readPosition = 1
-   l.ch = ""
+   l.ch = ''
 
    local readChar = function()
       if l.readPosition > string.len(l.input) then
-         l.ch = ""
+         l.ch = ''
       else
          l.ch = string.sub(l.input, l.readPosition, l.readPosition)
       end
@@ -28,11 +28,11 @@ Lexer.new = function(input)
    end
 
    local isLetter = function(ch)
-      return (string.match(ch, "[%l%u_]") ~= nil)
+      return (string.match(ch, '[%l%u_]') ~= nil)
    end
 
    local isDigit = function(ch)
-      return (string.match(ch, "%d") ~= nil)
+      return (string.match(ch, '%d') ~= nil)
    end
 
    local peekChar = function()
@@ -60,41 +60,41 @@ Lexer.new = function(input)
    end
 
    local skipWhitespace = function()
-      while string.match(l.ch, "[ \t\n\r]") do
+      while string.match(l.ch, '[ \t\n\r]') do
          readChar()
       end
    end
 
    l.nextToken = function()
       skipWhitespace()
-      local tok = newToken(token.EOF, "")
-      if l.ch == "=" then
-         if peekChar() == "=" then
+      local tok = newToken(token.EOF, '')
+      if l.ch == '=' then
+         if peekChar() == '=' then
             readChar()
-            tok = newToken(token.EQ, "==")
+            tok = newToken(token.EQ, '==')
          else
             tok = newToken(token.ASSIGN, l.ch)
          end
-      elseif l.ch == "!" then
-         if peekChar() == "=" then
+      elseif l.ch == '!' then
+         if peekChar() == '=' then
             readChar()
-            tok = newToken(token.NOT_EQ, "!=")
+            tok = newToken(token.NOT_EQ, '!=')
          else
             tok = newToken(token.BANG, l.ch)
          end
-      elseif l.ch == ";" then tok = newToken(token.SEMICOLON, l.ch)
-      elseif l.ch == "(" then tok = newToken(token.LPAREN, l.ch)
-      elseif l.ch == ")" then tok = newToken(token.RPAREN, l.ch)
-      elseif l.ch == "," then tok = newToken(token.COMMA, l.ch)
-      elseif l.ch == "+" then tok = newToken(token.PLUS, l.ch)
-      elseif l.ch == "-" then tok = newToken(token.MINUS, l.ch)
-      elseif l.ch == "/" then tok = newToken(token.SLASH, l.ch)
-      elseif l.ch == "*" then tok = newToken(token.ASTERISK, l.ch)
-      elseif l.ch == "<" then tok = newToken(token.LT, l.ch)
-      elseif l.ch == ">" then tok = newToken(token.GT, l.ch)
-      elseif l.ch == "{" then tok = newToken(token.LBRACE, l.ch)
-      elseif l.ch == "}" then tok = newToken(token.RBRACE, l.ch)
-      elseif l.ch == ""  then tok = newToken(token.EOF, l.ch)
+      elseif l.ch == ';' then tok = newToken(token.SEMICOLON, l.ch)
+      elseif l.ch == '(' then tok = newToken(token.LPAREN, l.ch)
+      elseif l.ch == ')' then tok = newToken(token.RPAREN, l.ch)
+      elseif l.ch == ',' then tok = newToken(token.COMMA, l.ch)
+      elseif l.ch == '+' then tok = newToken(token.PLUS, l.ch)
+      elseif l.ch == '-' then tok = newToken(token.MINUS, l.ch)
+      elseif l.ch == '/' then tok = newToken(token.SLASH, l.ch)
+      elseif l.ch == '*' then tok = newToken(token.ASTERISK, l.ch)
+      elseif l.ch == '<' then tok = newToken(token.LT, l.ch)
+      elseif l.ch == '>' then tok = newToken(token.GT, l.ch)
+      elseif l.ch == '{' then tok = newToken(token.LBRACE, l.ch)
+      elseif l.ch == '}' then tok = newToken(token.RBRACE, l.ch)
+      elseif l.ch == ''  then tok = newToken(token.EOF, l.ch)
       else
          if isLetter(l.ch) then
             local literal = readIdentifier()
