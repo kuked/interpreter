@@ -1,4 +1,5 @@
 -- test_lexer.lua
+package.path = package.path .. ';../src/?.lua'
 local luaunit = require('luaunit')
 local lexer = require('lexer')
 local token = require('token')
