@@ -1,5 +1,5 @@
 -- lexer.lua
-local token = require('token')
+local Token = require('token')
 
 local Lexer = {}
 
@@ -10,7 +10,7 @@ Lexer.new = function(input)
    l.readPosition = 1
    l.ch = ''
 
-   local readChar = function()
+   local read_char = function()
       if l.readPosition > string.len(l.input) then
          l.ch = ''
       else
@@ -20,22 +20,22 @@ Lexer.new = function(input)
       l.readPosition = l.readPosition + 1
    end
 
-   local newToken = function(tokenType, literal)
+   local new_token = function(tokenType, literal)
       local tok = {}
       tok.type = tokenType
       tok.literal = literal
       return tok
    end
 
-   local isLetter = function(ch)
+   local is_letter = function(ch)
       return (string.match(ch, '[%l%u_]') ~= nil)
    end
 
-   local isDigit = function(ch)
+   local is_digit = function(ch)
       return (string.match(ch, '%d') ~= nil)
    end
 
-   local peekChar = function()
+   local peek_char = function()
       if l.readPosition >= string.len(l.input) then
          return nil
       else
@@ -43,73 +43,73 @@ Lexer.new = function(input)
       end
    end
 
-   local readIdentifier = function()
+   local read_identifier = function()
       local position = l.position
-      while isLetter(l.ch) do
-         readChar()
+      while is_letter(l.ch) do
+         read_char()
       end
       return string.sub(l.input, position, l.position - 1)
    end
 
-   local readNumber = function()
+   local read_number = function()
       local position = l.position
-      while isDigit(l.ch) do
-         readChar()
+      while is_digit(l.ch) do
+         read_char()
       end
       return string.sub(l.input, position, l.position - 1)
    end
 
-   local skipWhitespace = function()
+   local skip_whitespace = function()
       while string.match(l.ch, '[ \t\n\r]') do
-         readChar()
+         read_char()
       end
    end
 
-   l.nextToken = function()
-      skipWhitespace()
-      local tok = newToken(token.EOF, '')
+   l.next_token = function()
+      skip_whitespace()
+      local tok = new_token(Token.EOF, '')
       if l.ch == '=' then
-         if peekChar() == '=' then
-            readChar()
-            tok = newToken(token.EQ, '==')
+         if peek_char() == '=' then
+            read_char()
+            tok = new_token(Token.EQ, '==')
          else
-            tok = newToken(token.ASSIGN, l.ch)
+            tok = new_token(Token.ASSIGN, l.ch)
          end
       elseif l.ch == '!' then
-         if peekChar() == '=' then
-            readChar()
-            tok = newToken(token.NOT_EQ, '!=')
+         if peek_char() == '=' then
+            read_char()
+            tok = new_token(Token.NOT_EQ, '!=')
          else
-            tok = newToken(token.BANG, l.ch)
+            tok = new_token(Token.BANG, l.ch)
          end
-      elseif l.ch == ';' then tok = newToken(token.SEMICOLON, l.ch)
-      elseif l.ch == '(' then tok = newToken(token.LPAREN, l.ch)
-      elseif l.ch == ')' then tok = newToken(token.RPAREN, l.ch)
-      elseif l.ch == ',' then tok = newToken(token.COMMA, l.ch)
-      elseif l.ch == '+' then tok = newToken(token.PLUS, l.ch)
-      elseif l.ch == '-' then tok = newToken(token.MINUS, l.ch)
-      elseif l.ch == '/' then tok = newToken(token.SLASH, l.ch)
-      elseif l.ch == '*' then tok = newToken(token.ASTERISK, l.ch)
-      elseif l.ch == '<' then tok = newToken(token.LT, l.ch)
-      elseif l.ch == '>' then tok = newToken(token.GT, l.ch)
-      elseif l.ch == '{' then tok = newToken(token.LBRACE, l.ch)
-      elseif l.ch == '}' then tok = newToken(token.RBRACE, l.ch)
-      elseif l.ch == ''  then tok = newToken(token.EOF, l.ch)
+      elseif l.ch == ';' then tok = new_token(Token.SEMICOLON, l.ch)
+      elseif l.ch == '(' then tok = new_token(Token.LPAREN, l.ch)
+      elseif l.ch == ')' then tok = new_token(Token.RPAREN, l.ch)
+      elseif l.ch == ',' then tok = new_token(Token.COMMA, l.ch)
+      elseif l.ch == '+' then tok = new_token(Token.PLUS, l.ch)
+      elseif l.ch == '-' then tok = new_token(Token.MINUS, l.ch)
+      elseif l.ch == '/' then tok = new_token(Token.SLASH, l.ch)
+      elseif l.ch == '*' then tok = new_token(Token.ASTERISK, l.ch)
+      elseif l.ch == '<' then tok = new_token(Token.LT, l.ch)
+      elseif l.ch == '>' then tok = new_token(Token.GT, l.ch)
+      elseif l.ch == '{' then tok = new_token(Token.LBRACE, l.ch)
+      elseif l.ch == '}' then tok = new_token(Token.RBRACE, l.ch)
+      elseif l.ch == ''  then tok = new_token(Token.EOF, l.ch)
       else
-         if isLetter(l.ch) then
-            local literal = readIdentifier()
-            return newToken(token.lookupIdent(literal), literal)
-         elseif isDigit(l.ch) then
-            return newToken(token.INT, readNumber())
+         if is_letter(l.ch) then
+            local literal = read_identifier()
+            return new_token(Token.lookup_ident(literal), literal)
+         elseif is_digit(l.ch) then
+            return new_token(Token.INT, read_number())
          else
-            tok = newToken(token.ILLEGAL, l.ch)
+            tok = new_token(Token.ILLEGAL, l.ch)
          end
       end
-      readChar()
+      read_char()
       return tok
    end
 
-   readChar()
+   read_char()
 
    return l
 end

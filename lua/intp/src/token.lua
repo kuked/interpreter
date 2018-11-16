@@ -44,9 +44,9 @@ local keywords = {
    if_     = Token.IF,
    else_   = Token.ELSE,
    return_ = Token.RETURN
-} 
+}
 
-Token.lookupIdent = function(ident)
+Token.lookup_ident = function(ident)
    local key = ident
    if string.match(key, 'true') or string.match(key, 'false') or string.match(key, 'if') or string.match(key, 'else') or string.match(key, 'return') then
       key = ident..'_'
