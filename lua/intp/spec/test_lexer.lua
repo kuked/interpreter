@@ -12,7 +12,7 @@ _record.new = function(type, literal)
    return obj
 end
 
-function testNextToken()
+function test_next_token()
    local input = [[
 let five = 5;
 let ten = 10;
@@ -110,10 +110,10 @@ if (5 < 10) {
       _record.new(token.SEMICOLON, ';'),
       _record.new(token.EOF, '')
    }
-   
+
    local l = lexer.new(input)
    for _, t in pairs(tests) do
-      local tok = l.nextToken()
+      local tok = l.next_token()
       luaunit.assertEquals(tok.type, t.type)
       luaunit.assertEquals(tok.literal, t.literal)
    end

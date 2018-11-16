@@ -1,6 +1,6 @@
 -- repl.lua
-local lexer = require('lexer')
-local token = require('token')
+local Lexer = require('lexer')
+local Token = require('token')
 
 local Repl = {}
 
@@ -11,10 +11,10 @@ Repl.start = function()
    while (true) do
       line = io.read()
       if line then
-         l = lexer.new(line)
+         l = Lexer.new(line)
          while (true) do
-            tok = l.nextToken()
-            if tok.type == token.EOF then
+            tok = l.next_token()
+            if tok.type == Token.EOF then
                break
             end
             print(tok.literal)
