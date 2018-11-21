@@ -5,16 +5,40 @@ from intp import lexer
 
 class TestNextToken(unittest.TestCase):
     def test_next_token(self):
-        input = "=+(){},;"
+        input = """
+        let five = 5;
+        let ten = 10;
+        let add = fn(x, y) {
+          x + y;
+        };
+        """
 
         tests = [
+            (token.LET, "let"),
+            (token.IDENT, "five"),
             (token.ASSIGN, "="),
-            (token.PLUS, "+"),
+            (token.INT, "5"),
+            (token.SEMICOLON, ";"),
+            (token.LET, "let"),
+            (token.IDENT, "ten"),
+            (token.ASSIGN, "="),
+            (token.INT, "10"),
+            (token.SEMICOLON, ";"),
+            (token.LET, "let"),
+            (token.IDENT, "add"),
+            (token.ASSIGN, "="),
+            (token.FUNCTION, "fn"),
             (token.LPAREN, "("),
+            (token.IDENT, "x"),
+            (token.COMMA, ","),
+            (token.IDENT, "y"),
             (token.RPAREN, ")"),
             (token.LBRACE, "{"),
+            (token.IDENT, "x"),
+            (token.PLUS, "+"),
+            (token.IDENT, "y"),
+            (token.SEMICOLON, ";"),
             (token.RBRACE, "}"),
-            (token.COMMA, ","),
             (token.SEMICOLON, ";"),
             (token.EOF, ""),
         ]

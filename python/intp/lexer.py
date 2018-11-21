@@ -17,9 +17,27 @@ class Lexer:
         self.position = self.read_position
         self.read_position += 1
 
+    def _read_identifier(self):
+        position = self.position
+        while is_letter(self.ch):
+            self._read_char()
+        return self.input[position:self.position]
+
+    def _skip_white_space(self):
+        while self.ch == " " or self.ch == "\t" or self.ch == "\n" or self.ch == "\r":
+            self._read_char()
+
+    def _read_number(self):
+        position = self.position
+        while is_digit(self.ch):
+            self._read_char()
+        return self.input[position:self.position]
+
     def next_token(self):
         def _new_token(type):
             return token.Token(type, self.ch)
+
+        self._skip_white_space()
 
         if self.ch == "=":
             tok = _new_token(token.ASSIGN)
@@ -37,8 +55,28 @@ class Lexer:
             tok = _new_token(token.LBRACE)
         elif self.ch == "}":
             tok = _new_token(token.RBRACE)
-        else:
+        elif self.ch is None:
             tok = token.Token(token.EOF, "")
+        else:
+            if is_letter(self.ch):
+                literal = self._read_identifier()
+                return token.Token(token.lookup_ident(literal), literal)
+            elif is_digit(self.ch):
+                return token.Token(token.INT, self._read_number())
+            else:
+                tok = _new_token(token.ILLEGAL)
 
         self._read_char()
         return tok
+
+
+def is_letter(ch):
+    if ch is None:
+        return False
+    return "a" <= ch and ch <= "z" or "A" <= ch and ch <= "Z" or ch == "_"
+
+
+def is_digit(ch):
+    if ch is None:
+        return False
+    return "0" <= ch and ch <= "9"
