@@ -23,3 +23,12 @@ RBRACE = "}"
 
 FUNCTION = "FUNCTION"
 LET = "LET"
+
+_keywords = {
+    "fn": FUNCTION,
+    "let": LET,
+}
+
+
+def lookup_ident(ident):
+    return _keywords.get(ident, IDENT)
