@@ -1,5 +1,6 @@
 import unittest
 from intp import token
+from intp import lexer
 
 
 class TestNextToken(unittest.TestCase):
