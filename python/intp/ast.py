@@ -25,3 +25,12 @@ class Identifier:
 
     def token_literal(self):
         return self.token.literal
+
+
+class ReturnStatement:
+    def __init__(self, token):
+        self.token = token
+        self.return_value = None
+
+    def token_literal(self):
+        return self.token.literal

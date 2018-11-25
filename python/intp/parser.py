@@ -19,6 +19,8 @@ class Parser:
     def _parse_statement(self):
         if self.cur_token.type == token.LET:
             return self._parse_let_statement()
+        elif self.cur_token.type == token.RETURN:
+            return self._parse_return_statement()
         else:
             return None
 
@@ -31,6 +33,15 @@ class Parser:
             return None
         while not self._cur_token_is(token.SEMICOLON):
             self._next_token()
+        return stmt
+
+    def _parse_return_statement(self):
+        stmt = ast.ReturnStatement(self.cur_token)
+        self._next_token()
+
+        while not self._cur_token_is(token.SEMICOLON):
+            self._next_token()
+
         return stmt
 
     def _cur_token_is(self, tp):

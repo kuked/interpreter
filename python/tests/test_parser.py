@@ -33,6 +33,24 @@ class TestLetStatements(unittest.TestCase):
             self.assertEqual(let_stmt.name.value, expected)
             self.assertEqual(let_stmt.name.token_literal(), expected)
 
+    def test_return_statement(self):
+        input = """
+        return 5;
+        return 10;
+        return 993322;
+        """
+
+        l = lexer.Lexer(input)
+        p = parser.Parser(l)
+
+        program = p.parse_program()
+        self.check_parse_errors(p)
+        self.assertEqual(len(program.statements), 3)
+
+        for stmt in program.statements:
+            self.assertIsInstance(stmt, ast.ReturnStatement)
+            self.assertEqual(stmt.token_literal(), "return")
+
     def check_parse_errors(self, parser):
         errors = parser.errors
         if len(errors) == 0:
