@@ -16,6 +16,7 @@ class TestLetStatements(unittest.TestCase):
         p = parser.Parser(l)
 
         program = p.parse_program()
+        self.check_parse_errors(p)
         self.assertIsNotNone(program)
         self.assertEqual(len(program.statements), 3)
 
@@ -31,3 +32,12 @@ class TestLetStatements(unittest.TestCase):
             let_stmt = stmt
             self.assertEqual(let_stmt.name.value, expected)
             self.assertEqual(let_stmt.name.token_literal(), expected)
+
+    def check_parse_errors(self, parser):
+        errors = parser.errors
+        if len(errors) == 0:
+            return
+        print("parser has %d errors" % len(errors))
+        for msg in errors:
+            print("parser error: %s" % msg)
+        self.fail()

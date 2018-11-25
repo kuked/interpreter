@@ -7,6 +7,7 @@ class Parser:
         self.lexer = lexer
         self.cur_token = None
         self.peek_token = None
+        self.errors = []
 
         self._next_token()
         self._next_token()
@@ -42,7 +43,13 @@ class Parser:
         if self._peek_token_is(tp):
             self._next_token()
             return True
-        return False
+        else:
+            self._peek_error(tp)
+            return False
+
+    def _peek_error(self, tp):
+        msg = "expected next token to be %s, got %s instead" % (tp, self.peek_token.type)
+        self.errors.append(msg)
 
     def parse_program(self):
         program = ast.Program()
