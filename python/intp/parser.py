@@ -1,6 +1,8 @@
 from intp import ast
 from intp import token
 
+LOWEST = 0
+
 
 class Parser:
     def __init__(self, lexer):
@@ -8,6 +10,9 @@ class Parser:
         self.cur_token = None
         self.peek_token = None
         self.errors = []
+        self.prefix_parse_fns = {
+            token.IDENT: self._parse_identifier,
+        }
 
         self._next_token()
         self._next_token()
@@ -22,7 +27,7 @@ class Parser:
         elif self.cur_token.type == token.RETURN:
             return self._parse_return_statement()
         else:
-            return None
+            return self._parse_expression_statement()
 
     def _parse_let_statement(self):
         stmt = ast.LetStatement(self.cur_token)
@@ -43,6 +48,23 @@ class Parser:
             self._next_token()
 
         return stmt
+
+    def _parse_expression_statement(self):
+        stmt = ast.ExpressionStatement(self.cur_token)
+        stmt.expression = self._parse_expression(LOWEST)
+        if self._peek_token_is(token.SEMICOLON):
+            self._next_token()
+        return stmt
+
+    def _parse_expression(self, precedence):
+        prefix = self.prefix_parse_fns[self.cur_token.type]
+        if not prefix:
+            return None
+        left_exp = prefix()
+        return left_exp
+
+    def _parse_identifier(self):
+        return ast.Identifier(self.cur_token, self.cur_token.literal)
 
     def _cur_token_is(self, tp):
         return self.cur_token.type == tp
