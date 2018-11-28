@@ -51,6 +51,23 @@ class TestLetStatements(unittest.TestCase):
             self.assertIsInstance(stmt, ast.ReturnStatement)
             self.assertEqual(stmt.token_literal(), "return")
 
+    def test_identifier_expression(self):
+        input = "foobar;"
+
+        l = lexer.Lexer(input)
+        p = parser.Parser(l)
+
+        program = p.parse_program()
+        self.check_parse_errors(p)
+
+        self.assertEqual(len(program.statements), 1)
+        stmt = program.statements[0]
+        self.assertIsInstance(stmt, ast.ExpressionStatement)
+
+        ident = stmt.expression
+        self.assertEqual(ident.value, "foobar")
+        self.assertEqual(ident.token_literal(), "foobar")
+
     def check_parse_errors(self, parser):
         errors = parser.errors
         if len(errors) == 0:
