@@ -12,6 +12,7 @@ class Parser:
         self.errors = []
         self.prefix_parse_fns = {
             token.IDENT: self._parse_identifier,
+            token.INT: self._parse_integer_literal,
         }
 
         self._next_token()
@@ -65,6 +66,11 @@ class Parser:
 
     def _parse_identifier(self):
         return ast.Identifier(self.cur_token, self.cur_token.literal)
+
+    def _parse_integer_literal(self):
+        lit = ast.IntegerLiteral(self.cur_token)
+        lit.value = int(self.cur_token.literal)
+        return lit
 
     def _cur_token_is(self, tp):
         return self.cur_token.type == tp
