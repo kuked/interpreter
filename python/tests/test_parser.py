@@ -68,6 +68,24 @@ class TestLetStatements(unittest.TestCase):
         self.assertEqual(ident.value, "foobar")
         self.assertEqual(ident.token_literal(), "foobar")
 
+    def test_integer_literal_expression(self):
+        input = "5;"
+
+        l = lexer.Lexer(input)
+        p = parser.Parser(l)
+
+        program = p.parse_program()
+        self.check_parse_errors(p)
+
+        self.assertEqual(len(program.statements), 1)
+        stmt = program.statements[0]
+        self.assertIsInstance(stmt, ast.ExpressionStatement)
+
+        literal = stmt.expression
+        self.assertIsInstance(literal, ast.IntegerLiteral)
+        self.assertEqual(literal.value, 5)
+        self.assertEqual(literal.token_literal(), "5")
+
     def check_parse_errors(self, parser):
         errors = parser.errors
         if len(errors) == 0:
