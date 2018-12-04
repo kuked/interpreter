@@ -2,6 +2,12 @@ from intp import ast
 from intp import token
 
 LOWEST = 0
+EQUALS = 1
+LESSGREATER = 2
+SUM = 3
+PRODUCT = 4
+PREFIX = 5
+CALL = 6
 
 
 class Parser:
@@ -13,6 +19,8 @@ class Parser:
         self.prefix_parse_fns = {
             token.IDENT: self._parse_identifier,
             token.INT: self._parse_integer_literal,
+            token.BANG: self._parse_prefix_expression,
+            token.MINUS: self._parse_prefix_expression,
         }
 
         self._next_token()
@@ -60,6 +68,7 @@ class Parser:
     def _parse_expression(self, precedence):
         prefix = self.prefix_parse_fns[self.cur_token.type]
         if not prefix:
+            self.errors.append(f"no prefix parse function for %s found" % self.cur_token.type)
             return None
         left_exp = prefix()
         return left_exp
@@ -71,6 +80,14 @@ class Parser:
         lit = ast.IntegerLiteral(self.cur_token)
         lit.value = int(self.cur_token.literal)
         return lit
+
+    def _parse_prefix_expression(self):
+        expression = ast.PrefixExpression(self.cur_token)
+        expression.operator = self.cur_token.literal
+        self._next_token()
+        expression.right = self._parse_expression(PREFIX)
+
+        return expression
 
     def _cur_token_is(self, tp):
         return self.cur_token.type == tp

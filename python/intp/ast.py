@@ -90,3 +90,21 @@ class IntegerLiteral:
 
     def string(self):
         return self.token.literal
+
+
+class PrefixExpression:
+    def __init__(self, token):
+        self.token = token
+        self.operator = None
+        self.right = None
+
+    def token_literal(self):
+        return self.token.literal
+
+    def string(self):
+        out = io.StringIO()
+        out.write("(")
+        out.write(self.operator)
+        out.write(self.right.string())
+        out.write(")")
+        return out.getvalue()
