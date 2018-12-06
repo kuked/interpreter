@@ -110,6 +110,34 @@ class TestLetStatements(unittest.TestCase):
             self.assertEqual(integ.value, test[2])
             self.assertEqual(integ.token_literal(), str(test[2]))
 
+    def test_parsing_infix_expression(self):
+        tests = [
+            ["5 + 5;", 5, "+", 5],
+            ["5 - 5;", 5, "-", 5],
+            ["5 * 5;", 5, "*", 5],
+            ["5 / 5;", 5, "/", 5],
+            ["5 > 5;", 5, ">", 5],
+            ["5 < 5;", 5, "<", 5],
+            ["5 == 5;", 5, "==", 5],
+            ["5 != 5;", 5, "!=", 5],
+        ]
+
+        for test in tests:
+            l = lexer.Lexer(test[0])
+            p = parser.Parser(l)
+
+            program = p.parse_program()
+            self.check_parse_errors(p)
+
+            self.assertEqual(len(program.statements), 1)
+            stmt = program.statements[0]
+            self.assertIsInstance(stmt, ast.ExpressionStatement)
+            exp = stmt.expression
+            self.assertIsInstance(exp, ast.InfixExpression)
+            # TODO self._test_integer_literal(exp.left, test[1])
+            self.assertEqual(exp.operator, test[2])
+            # TODO self._test_integer_literal(exp.right, test[3])
+
     def check_parse_errors(self, parser):
         errors = parser.errors
         if len(errors) == 0:

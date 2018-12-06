@@ -22,6 +22,26 @@ class Parser:
             token.BANG: self._parse_prefix_expression,
             token.MINUS: self._parse_prefix_expression,
         }
+        self.infix_parse_fns = {
+            token.PLUS: self._parse_infix_expression,
+            token.MINUS: self._parse_infix_expression,
+            token.SLASH: self._parse_infix_expression,
+            token.ASTERISK: self._parse_infix_expression,
+            token.EQ: self._parse_infix_expression,
+            token.NOT_EQ: self._parse_infix_expression,
+            token.LT: self._parse_infix_expression,
+            token.GT: self._parse_infix_expression,
+        }
+        self.precedences = {
+            token.EQ: EQUALS,
+            token.NOT_EQ: EQUALS,
+            token.LT: LESSGREATER,
+            token.GT: LESSGREATER,
+            token.PLUS: SUM,
+            token.MINUS: SUM,
+            token.SLASH: PRODUCT,
+            token.ASTERISK: PRODUCT,
+        }
 
         self._next_token()
         self._next_token()
@@ -71,6 +91,13 @@ class Parser:
             self.errors.append(f"no prefix parse function for %s found" % self.cur_token.type)
             return None
         left_exp = prefix()
+        while not self._peek_token_is(token.SEMICOLON) and precedence < self._peek_precedence():
+            infix = self.infix_parse_fns[self.peek_token.type]
+            if not infix:
+                return left_exp
+            self._next_token()
+            left_exp = infix(left_exp)
+
         return left_exp
 
     def _parse_identifier(self):
@@ -89,6 +116,17 @@ class Parser:
 
         return expression
 
+    def _parse_infix_expression(self, left):
+        exp = ast.InfixExpression(self.cur_token)
+        exp.operator = self.cur_token.literal
+        exp.left = left
+
+        prec = self._cur_precedence()
+        self._next_token()
+        exp.right = self._parse_expression(prec)
+
+        return exp
+
     def _cur_token_is(self, tp):
         return self.cur_token.type == tp
 
@@ -106,6 +144,18 @@ class Parser:
     def _peek_error(self, tp):
         msg = "expected next token to be %s, got %s instead" % (tp, self.peek_token.type)
         self.errors.append(msg)
+
+    def _peek_precedence(self):
+        prec = self.precedences[self.peek_token.type]
+        if prec:
+            return prec
+        return LOWEST
+
+    def _cur_precedence(self):
+        prec = self.precedences[self.cur_token.type]
+        if prec:
+            return prec
+        return LOWEST
 
     def parse_program(self):
         program = ast.Program()
