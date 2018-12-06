@@ -108,3 +108,23 @@ class PrefixExpression:
         out.write(self.right.string())
         out.write(")")
         return out.getvalue()
+
+
+class InfixExpression:
+    def __init__(self, token):
+        self.token = token
+        self.left = None
+        self.operator = ""
+        self.right = None
+
+    def token_literal(self):
+        return self.token.literal
+
+    def string(self):
+        out = io.StringIO()
+        out.write("(")
+        out.write(self.left.string())
+        out.write(" " + self.operator + " ")
+        out.write(self.right.string())
+        out.write(")")
+        return out.getvalue()
